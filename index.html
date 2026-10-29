@@ -118,6 +118,17 @@
 <section class="why wrap">
   <h2>Rules, not an AI that sorts your mail.</h2>
   <p class="section-lede">Many AI mail clients hand every message to a model and let it decide. Postvak sorts with rules you can read, and lets AI help you write them.</p>
+  <figure class="sorter">
+    <div class="sorter-row" style="--i: 0"><code class="rule">header."List-Id".contains = "shop"</code><span class="bin"><code>move, read</code>Newsletters</span></div>
+    <div class="sorter-row" style="--i: 1"><code class="rule">subject.contains = "invoice"</code><span class="bin"><code>archive</code>Archive</span></div>
+    <div class="sorter-row" style="--i: 2"><code class="rule wait">subject.regex = "sign.?in"<br>older_than = "1h"</code><span class="bin"><code>delete</code>Trash</span></div>
+    <div class="sorter-row" style="--i: 3"><code class="rule none">no rule matches</code><span class="bin"><code>untouched</code>Inbox</span></div>
+    <div class="mail" style="--i: 0">deals@shop.example</div>
+    <div class="mail" style="--i: 1">Invoice #2041</div>
+    <div class="mail wait" style="--i: 2">Your sign-in code</div>
+    <div class="mail" style="--i: 3">Lunch on Friday?</div>
+    <figcaption>A rule matches on any header, the sender or the subject, then acts. No match, the message stays in the inbox.</figcaption>
+  </figure>
   <div class="grid">
     <article><h3>Predictable</h3><p>The same mail gets the same outcome, every time. A model can file a message differently tomorrow, or delete one it misread.</p></article>
     <article><h3>Reviewable</h3><p>A rule is a few lines of TOML. <a href="/docs/cli.html#postvak-rules-test"><code>rules test</code></a> shows what it would do, and <a href="/docs/cli.html#postvak-log"><code>postvak log</code></a> says which rule did what.</p></article>
