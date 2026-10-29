@@ -9,6 +9,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon.png">
 <meta name="theme-color" content="#1c2436">
+<link rel="preload" href="assets/fonts/BricolageGrotesque-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/HankenGrotesk-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Postvak">
@@ -99,8 +101,10 @@
 
 <section class="shot wrap">
   <picture>
+    <source srcset="assets/gui_inbox_dark.avif" media="(prefers-color-scheme: dark)" type="image/avif">
     <source srcset="assets/gui_inbox_dark.png" media="(prefers-color-scheme: dark)">
-    <img src="assets/gui_inbox_light.png" alt="The Postvak mail window: folders on the left, the inbox in the middle, an open message on the right" width="1280" height="800" loading="lazy">
+    <source srcset="assets/gui_inbox_light.avif" type="image/avif">
+    <img src="assets/gui_inbox_light.png" alt="The Postvak mail window: folders on the left, the inbox in the middle, an open message on the right" width="1280" height="800" fetchpriority="high">
   </picture>
 </section>
 
@@ -126,7 +130,10 @@
       <pre class="inline-cmd"><code><span class="p">$</span> postvak mcp install claude-desktop</code></pre>
       <a class="arrow" href="/docs/mcp.html">Agents over MCP</a>
     </div>
-    <img src="assets/gui_rules.png" alt="The Rules view with a rule proposed by an agent, waiting for Approve or Reject" width="1280" height="800" loading="lazy">
+    <picture>
+      <source srcset="assets/gui_rules.avif" type="image/avif">
+      <img src="assets/gui_rules.png" alt="The Rules view with a rule proposed by an agent, waiting for Approve or Reject" width="1280" height="800" loading="lazy">
+    </picture>
   </div>
 </section>
 
