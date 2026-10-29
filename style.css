@@ -88,7 +88,7 @@ h3 { font-size: 20px; margin-bottom: 8px; }
 .button.primary:hover { background: #f06a44; }
 .button.ghost { color: inherit; box-shadow: inset 0 0 0 1px currentColor; opacity: 0.85; }
 
-.hero-code { position: relative; min-width: 0; }
+.hero-code { position: relative; min-width: 0; margin: 0; }
 .hero-copy { min-width: 0; }
 .window { background: #11141d; border: 1px solid var(--ink-line); border-radius: 14px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6); overflow: hidden; }
 .window-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--ink-line); }

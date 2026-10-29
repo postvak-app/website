@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -42,7 +42,7 @@
 <body>
 
 <header class="hero">
-  <nav class="nav wrap">
+  <nav class="nav wrap" aria-label="Main">
     <a class="brand" href="/"><img src="favicon.svg" alt="" width="32" height="32"> Postvak</a>
     <div class="nav-links">
       <a href="/docs/">Docs</a>
@@ -60,10 +60,10 @@
 
       <div class="install" data-tabs>
         <div class="tabs" role="tablist">
-          <button role="tab" aria-selected="true" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
-          <button role="tab" aria-selected="false" data-cmd="flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo&#10;flatpak remote-add --user --if-not-exists postvak https://postvak.pataar.nl/flatpak/postvak.flatpakrepo&#10;flatpak install --user postvak io.github.postvak_app.postvak">Flatpak</button>
-          <button role="tab" aria-selected="false" data-cmd="cargo install postvak">Cargo</button>
-          <button role="tab" aria-selected="false" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
+          <button type="button" role="tab" aria-selected="true" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
+          <button type="button" role="tab" aria-selected="false" data-cmd="flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo&#10;flatpak remote-add --user --if-not-exists postvak https://postvak.pataar.nl/flatpak/postvak.flatpakrepo&#10;flatpak install --user postvak io.github.postvak_app.postvak">Flatpak</button>
+          <button type="button" role="tab" aria-selected="false" data-cmd="cargo install postvak">Cargo</button>
+          <button type="button" role="tab" aria-selected="false" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
         </div>
         <div class="cmd">
           <code data-out>$ brew install postvak-app/tap/postvak</code>
@@ -77,7 +77,7 @@
       </div>
     </div>
 
-    <div class="hero-code" aria-label="An example rule">
+    <figure class="hero-code" aria-label="An example rule">
       <div class="window">
         <div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
 <pre><code><span class="k">[[rules]]</span>
@@ -93,7 +93,7 @@
 <span class="p">$</span> postvak service install <span class="c"># sort at login</span>
 <span class="p">$</span> postvak trash list      <span class="c"># undo for 30 days</span></code></pre>
       </div>
-    </div>
+    </figure>
   </div>
 </header>
 
@@ -159,8 +159,8 @@
 </main>
 
 <footer class="footer wrap">
-  <span>Made with <span aria-label="love">❤️</span> for open source by <a href="https://github.com/pataar">pataar</a></span>
-  <nav>
+  <span>Made with <span role="img" aria-label="love">❤️</span> for open source by <a href="https://github.com/pataar">pataar</a></span>
+  <nav aria-label="Footer">
     <a href="/docs/">Docs</a>
     <a href="/docs/install.html">Install</a>
     <a href="https://github.com/postvak-app/postvak/releases">Releases</a>
