@@ -1,0 +1,18 @@
+name: Deploy
+
+# postvak-app/postvak builds and deploys postvak.pataar.nl (this page, its docs at /docs/ and the Flatpak repository), so a
+# push here only asks it to run again.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.POSTVAK_DOCS_TOKEN }}
+        run: gh workflow run docs.yml --repo postvak-app/postvak --ref main
