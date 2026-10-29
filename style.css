@@ -119,6 +119,50 @@ section { padding: 96px 0 0; }
 .grid > a:hover { border-color: var(--vermilion); transform: translateY(-2px); }
 .grid > a h3::after { content: " →"; color: var(--vermilion); }
 
+/* Mail sorting animation: each mail passes behind its rule into a bin; --i staggers mail, rule and bin together */
+.sorter { --pad: 20px; --h: 48px; --row: calc(var(--h) + 10px); position: relative; margin: 0 0 40px; padding: var(--pad); background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.sorter-row { display: grid; grid-template-columns: 30% 1fr 22%; gap: 12px; align-items: center; height: var(--h); margin-bottom: 10px; }
+.sorter .rule, .sorter .bin { height: 100%; display: flex; align-items: center; border-radius: 10px; }
+.sorter .rule { grid-column: 2; position: relative; z-index: 1; padding: 0 14px; background: var(--paper-2); border: 1px solid var(--line); font-size: 13px; animation: sorter-match 12s calc(var(--i) * 3s) infinite; }
+.sorter .rule.none { color: var(--muted); border-style: dashed; }
+.sorter .rule.wait { overflow: hidden; line-height: 1.35; }
+.sorter .rule.wait::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--vermilion); transform-origin: left; transform: scaleX(0); animation: sorter-wait 12s calc(var(--i) * 3s) infinite; }
+.sorter .bin { flex-direction: column; justify-content: center; font-weight: 600; font-size: 15px; line-height: 1.2; border: 1px dashed var(--line); animation: sorter-drop 12s calc(var(--i) * 3s) infinite; }
+.sorter .bin code { color: var(--vermilion); font-size: 11px; }
+.sorter .mail { position: absolute; left: var(--pad); top: calc(var(--pad) + var(--i) * var(--row)); width: 26%; height: var(--h); display: flex; align-items: center; padding: 0 12px; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--vermilion); border-radius: 8px; box-shadow: 0 8px 20px -10px rgba(15, 18, 28, 0.45); font: 500 13px var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: sorter-mail 12s calc(var(--i) * 3s) infinite both; }
+.sorter figcaption { margin-top: 8px; color: var(--muted); font-size: 15px; }
+@keyframes sorter-mail {
+    0% { opacity: 0; left: var(--pad); top: calc(var(--pad) + 1.5 * var(--row)); transform: translateX(-12px); }
+    4% { opacity: 1; left: var(--pad); top: calc(var(--pad) + 1.5 * var(--row)); transform: none; }
+    10% { left: var(--pad); top: calc(var(--pad) + var(--i) * var(--row)); }
+    24% { opacity: 1; left: calc(100% - var(--pad) - 24%); transform: none; }
+    28%, 100% { opacity: 0; left: calc(100% - var(--pad) - 24%); top: calc(var(--pad) + var(--i) * var(--row)); transform: scale(0.6); }
+}
+@keyframes sorter-match {
+    0%, 12%, 26%, 100% { border-color: var(--line); }
+    15%, 22% { border-color: var(--vermilion); box-shadow: 0 0 0 3px rgba(232, 86, 47, 0.2); }
+}
+/* Held behind its rule while the older_than timer fills */
+.sorter .mail.wait { animation-name: sorter-mail-wait; }
+.sorter .wait ~ .bin { animation-delay: calc(var(--i) * 3s + 1.08s); }
+@keyframes sorter-mail-wait {
+    0% { opacity: 0; left: var(--pad); top: calc(var(--pad) + 1.5 * var(--row)); transform: translateX(-12px); }
+    4% { opacity: 1; left: var(--pad); top: calc(var(--pad) + 1.5 * var(--row)); transform: none; }
+    10% { left: var(--pad); top: calc(var(--pad) + var(--i) * var(--row)); }
+    14%, 32% { left: 40%; }
+    36% { opacity: 1; left: calc(100% - var(--pad) - 24%); transform: none; }
+    40%, 100% { opacity: 0; left: calc(100% - var(--pad) - 24%); top: calc(var(--pad) + var(--i) * var(--row)); transform: scale(0.6); }
+}
+@keyframes sorter-wait {
+    0%, 14% { transform: scaleX(0); opacity: 1; }
+    32% { transform: scaleX(1); opacity: 1; }
+    36%, 100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes sorter-drop {
+    0%, 24%, 34%, 100% { background: transparent; }
+    27% { background: rgba(232, 86, 47, 0.14); border-color: var(--vermilion); }
+}
+
 .agent { margin-top: 96px; padding: 96px 0; background: var(--paper-2); border-block: 1px solid var(--line); }
 .split { display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px; align-items: center; }
 .split h2 { margin-bottom: 18px; }
@@ -151,8 +195,14 @@ section { padding: 96px 0 0; }
     .hero { padding-bottom: 80px; }
     .shot { margin-top: -48px; }
     section { padding-top: 64px; }
+    .sorter { --pad: 12px; --h: 64px; }
+    .sorter-row { gap: 8px; grid-template-columns: 30% 1fr 24%; }
+    .sorter .rule { padding: 0 8px; font-size: 11px; }
+    .sorter .bin { font-size: 13px; }
+    .sorter .mail { padding: 0 8px; font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .button, .grid > a { transition: none; }
+    .sorter .rule, .sorter .rule::after, .sorter .bin, .sorter .mail, .sorter .mail.wait { animation: none; }
 }
