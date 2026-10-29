@@ -7,3 +7,7 @@ The site is deployed from postvak-app/postvak, whose `docs.yml` puts this reposi
 Don't add `docs/`, `flatpak/` or a page named like one of the book's (`install.html`, `rules.html`, …) here: those paths belong to the docs and its redirects.
 
 The fonts are under the SIL Open Font License (`assets/fonts/OFL-*.txt`); the screenshots are Postvak's own GUI snapshots.
+
+## Feature sync
+
+The landing page describes postvak-app/postvak as of commit `5d725454d7855e41b05ebaac9fb8a728501dc3b1`. Bump it after updating the page for newer app changes; a local Claude Code skill, `feature-sync`, reviews what changed in the app since then, updates the page, and moves this commit forward. README.md is not deployed, so the commit stays off the site.
