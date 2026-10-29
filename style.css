@@ -1,7 +1,7 @@
-@font-face { font-family: "Bricolage Grotesque"; font-weight: 600; font-display: swap; src: url("assets/fonts/BricolageGrotesque-SemiBold.ttf") format("truetype"); }
-@font-face { font-family: "Hanken Grotesk"; font-weight: 500; font-display: swap; src: url("assets/fonts/HankenGrotesk-Medium.ttf") format("truetype"); }
-@font-face { font-family: "Hanken Grotesk"; font-weight: 600; font-display: swap; src: url("assets/fonts/HankenGrotesk-SemiBold.ttf") format("truetype"); }
-@font-face { font-family: "Spline Sans Mono"; font-weight: 500; font-display: swap; src: url("assets/fonts/SplineSansMono-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Bricolage Grotesque"; font-weight: 600; font-display: swap; src: url("assets/fonts/BricolageGrotesque-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-weight: 500; font-display: swap; src: url("assets/fonts/HankenGrotesk-Medium.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-weight: 600; font-display: swap; src: url("assets/fonts/HankenGrotesk-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "Spline Sans Mono"; font-weight: 500; font-display: swap; src: url("assets/fonts/SplineSansMono-Medium.woff2") format("woff2"); }
 
 :root {
     --ink: #1c2436;
