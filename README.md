@@ -10,4 +10,4 @@ The fonts are under the SIL Open Font License (`assets/fonts/OFL-*.txt`); the sc
 
 ## Feature sync
 
-The landing page describes postvak-app/postvak as of commit `5d725454d7855e41b05ebaac9fb8a728501dc3b1`. Bump it after updating the page for newer app changes; a local Claude Code skill, `feature-sync`, reviews what changed in the app since then, updates the page, and moves this commit forward. README.md is not deployed, so the commit stays off the site.
+The landing page describes postvak-app/postvak as of commit `7a6cdbad2bac841a8b6c584a54b4276efa220fd3`. Bump it after updating the page for newer app changes; a local Claude Code skill, `feature-sync`, reviews what changed in the app since then, updates the page, and moves this commit forward. README.md is not deployed, so the commit stays off the site.
