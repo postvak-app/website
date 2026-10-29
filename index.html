@@ -85,7 +85,14 @@
 <span class="a">match.subject</span> = { regex = <span class="s">"sign.?in|magic link"</span> }
 <span class="a">match.older_than</span> = <span class="s">"1h"</span>
 <span class="a">match.read</span> = <span class="b">true</span>
-<span class="a">actions.delete</span> = <span class="b">true</span></code></pre>
+<span class="a">actions.delete</span> = <span class="b">true</span>
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"archive old mail"</span>
+<span class="a">match.older_than</span> = <span class="s">"90d"</span>
+<span class="a">match.read</span> = <span class="b">true</span>
+<span class="a">match.flagged</span> = <span class="b">false</span>
+<span class="a">actions.archive</span> = <span class="b">true</span></code></pre>
       </div>
       <div class="window terminal">
         <div class="window-bar"><span></span><span></span><span></span><b>terminal</b></div>
