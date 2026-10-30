@@ -131,7 +131,7 @@
   </figure>
   <div class="grid">
     <article><h3>Predictable</h3><p>The same mail gets the same outcome, every time. A model can file a message differently tomorrow, or delete one it misread.</p></article>
-    <article><h3>Reviewable</h3><p>A rule is a few lines of TOML. <a href="/docs/cli.html#postvak-rules-test"><code>rules test</code></a> shows what it would do, and <a href="/docs/cli.html#postvak-log"><code>postvak log</code></a> says which rule did what.</p></article>
+    <article><h3>Reviewable</h3><p>A rule is a few lines of TOML. <a href="/docs/cli.html#postvak-rules-test"><code>rules test</code></a> shows what it would do. A message a rule acted on <a href="/docs/gui.html#message-actions-and-search">says which rule did it, and why</a>, and <a href="/docs/cli.html#postvak-log"><code>postvak log</code></a> lists every action.</p></article>
     <article><h3>Safe from the sender</h3><p>Mail is written by strangers. A rule matches patterns, so instructions hidden in a message cannot change what it does.</p></article>
     <article><h3>Private</h3><p>Your mail is never sent to a model to be sorted. Agents see only <a href="/docs/mcp.html#scopes">what you grant</a>: by default senders and subjects, no bodies.</p></article>
     <article><h3>Free and fast</h3><p>No tokens per message and no API key. Rules run on every sync, across years of mail, without a round trip to a model.</p></article>
@@ -151,7 +151,7 @@
     </div>
     <picture>
       <source srcset="assets/gui_rules.avif" type="image/avif">
-      <img src="assets/gui_rules.png" alt="The Rules view with a rule proposed by an agent, waiting for Approve or Reject" width="1280" height="800" loading="lazy">
+      <img src="assets/gui_rules.png" alt="The Rules view with a rule proposed by an agent, its dry run on cached mail beside it, waiting for Approve rule or Reject" width="1280" height="800" loading="lazy">
     </picture>
   </div>
 </section>
