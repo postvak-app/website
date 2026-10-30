@@ -1,56 +1,30 @@
 ---
 name: feature-sync
-description: Bring the landing page up to date with the Postvak app. Reviews what changed in postvak-app/postvak since the commit recorded in README.md, updates index.html and the screenshots in assets/, and moves the recorded commit forward. Use when the user says "/feature-sync", "sync the site with the app" or "update the landing page for new features".
+description: Bring the landing page up to date with what changed in the Postvak app since the last sync. Use when the user says "feature sync", "sync the site with the app", "what's new in postvak that the site misses", or asks whether the landing page is out of date.
 ---
 
 # Feature sync
 
-The landing page describes postvak-app/postvak as of the commit in README.md's "Feature sync" section. This skill moves the page, and that commit, forward to the app's current `main`.
+The README's "Feature sync" section records the postvak-app/postvak commit the landing page last matched. This skill finds what changed in the app since then and updates `index.html` (and `style.css` if needed) to match.
 
-## 1. See what changed
+## Steps
 
-Get the app repo (a sibling checkout, or clone `postvak-app/postvak`) and fetch `main`. Then, with `B` the commit from README.md:
+1. **Read the baseline.** Take the full SHA from the "Feature sync" section of `README.md`.
+2. **List what changed in the app.**
+   - `gh api repos/postvak-app/postvak/compare/<baseline>...main --jq '.commits[] | .sha[0:7] + " " + (.commit.message | split("\n")[0])'`. The compare API returns at most 250 commits; if `total_commits` is higher, page through it or work from the CHANGELOG alone.
+   - Read the new entries in `CHANGELOG.md`: `gh api repos/postvak-app/postvak/contents/CHANGELOG.md --jq .content | base64 -d`.
+   - For unclear changes, read the docs they touch (`docs/src/*.md`, especially `rules.md`, `mcp.md`, `cli.md`, `install.md`).
+   - Note the head SHA of `main` now, so commits landing during the sync don't get skipped: `gh api repos/postvak-app/postvak/commits/main --jq .sha`.
+3. **Keep only what a visitor would notice.** New or removed features, rule keys and actions, install methods, platforms, MCP scopes and tools, renamed CLI commands. Skip refactors, CI, dependency bumps and internal fixes.
+4. **Check the page against them.** For each change, look for what `index.html` says about that area: the hero copy and example rule, the install tabs, the "why" cards, the sorting animation's rule chips (they use real rule keys, so check them against `docs/src/rules.schema.json`), the MCP section, the four-surfaces grid, and every `/docs/...#anchor` link.
+5. **Check the screenshots.** `assets/gui_inbox_light.png`, `gui_inbox_dark.png` and `gui_rules.png` are copies of the app's `tests/snapshots/<name>.png`. Compare each blob SHA from `gh api "repos/postvak-app/postvak/contents/tests/snapshots/<name>.png?ref=<head>" --jq .sha` with `git hash-object assets/<name>.png`. For each that differs, download the new PNG (`--jq .download_url`), look at it, re-encode the AVIF beside it, and update the image's `alt` text if what it shows changed:
+   ```sh
+   ffmpeg -y -i gui_x.png -frames:v 1 -c:v libaom-av1 -still-picture 1 -cpu-used 4 -crf 30 \
+     -pix_fmt yuv444p -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 gui_x.avif
+   ```
+   Decode one AVIF back to PNG and look at it: text must stay sharp. `social-preview.png` is drawn by hand; leave it unless the rule it shows stopped being valid.
+6. **Report before editing.** List each change as: app change → what the page says now → proposed edit, or "no change needed". Include any screenshots that differ. Flag claims the app no longer supports. Let the user pick what to apply.
+7. **Apply and verify.** Edit the page, then run `pnpx html-validate@10.17.0 index.html` (the same check as CI) and look at the changed parts in the browser at desktop and phone width.
+8. **Move the baseline.** Replace the SHA in the README's "Feature sync" section with the head SHA from step 2, even for changes the user chose to skip. They have been reviewed.
 
-```sh
-git log --oneline B..origin/main
-git diff --stat B origin/main -- docs/src tests/snapshots
-```
-
-If the range is empty, say the page is already current and stop.
-
-Read each commit's message (`git show -s --format=%B`): the PR bodies say what changed for users. Skip commits that change only docs for contributors, CI or internal tooling.
-
-## 2. Check the page against the changes
-
-Read `index.html` and check every claim against the app at `origin/main`, not against memory. Look for:
-
-- **Claims that became false.** The closing line says Postvak "does not send" mail; the MCP section names the default scopes; the install tabs name commands; the hero shows rule keys and CLI commands. Check each against `docs/src/` and `rules.schema.json`.
-- **Features worth a line.** Add copy only for what changes how someone sees Postvak (a new surface, a new kind of rule action, a new install route). The page is about rules you write, not a feature list: GUI details belong in the docs.
-- **Links** into `/docs/…` whose page or anchor was renamed.
-
-Write copy the way the page does: short, concrete, no marketing adjectives.
-
-## 3. Screenshots
-
-The images in `assets/` are copies of the app's GUI test snapshots:
-
-| Site file | App snapshot |
-| --- | --- |
-| `assets/gui_inbox_light.png` | `tests/snapshots/gui_inbox_light.png` |
-| `assets/gui_inbox_dark.png` | `tests/snapshots/gui_inbox_dark.png` |
-| `assets/gui_rules.png` | `tests/snapshots/gui_rules.png` |
-
-Compare hashes; for each that differs, copy the snapshot from `origin/main` (`git show origin/main:tests/snapshots/<name>.png`), look at it, and re-encode the AVIF next to it:
-
-```sh
-ffmpeg -y -i gui_x.png -frames:v 1 -c:v libaom-av1 -still-picture 1 -cpu-used 4 -crf 30 \
-  -pix_fmt yuv444p -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 gui_x.avif
-```
-
-Decode one AVIF back to PNG and look at it: text must stay sharp. Update an image's `alt` text if what it shows changed. `social-preview.png` is drawn by hand; leave it unless the rule it shows stopped being valid.
-
-## 4. Record and ship
-
-- Set the commit in README.md to the full hash of the app's `origin/main` you reviewed.
-- If `index.html` changed, validate it as CI does: `npx html-validate@10.17.0 index.html`. Check it in a browser at desktop and 375px width with no horizontal scroll.
-- Commit with a message that names the app commit and lists what changed on the page, and what you checked but left alone and why.
+Commit only when the user asks, using a conventional commit such as `docs: sync landing page with postvak <short-sha>`.
