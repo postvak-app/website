@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Postvak — open-source mail sorting with rules you write</title>
-<meta name="description" content="Free, open-source mail sorting for any IMAP inbox on macOS and Linux. Rules you can read move, archive, mark read or delete mail. Dry-run every rule, undo any delete. No AI needed.">
+<meta name="description" content="Free, open-source mail sorting for any IMAP inbox on macOS and Linux. Rules you can read move, archive, mark read or delete mail. Dry-run every rule, undo what it did. No AI needed.">
 <link rel="canonical" href="https://postvak.pataar.nl/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon.png">
@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Postvak">
 <meta property="og:url" content="https://postvak.pataar.nl/">
 <meta property="og:title" content="Postvak — open-source mail sorting with rules you write">
-<meta property="og:description" content="Sort any IMAP inbox with rules you can read. Test them with a dry run and undo any delete. Free and open source.">
+<meta property="og:description" content="Sort any IMAP inbox with rules you can read. Test them with a dry run and undo what they did. Free and open source.">
 <meta property="og:image" content="https://postvak.pataar.nl/assets/social-preview.png">
 <meta property="og:image:width" content="2560">
 <meta property="og:image:height" content="1280">
@@ -27,7 +27,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Postvak",
-  "description": "Mail sorting with rules you write: Postvak syncs your mail over IMAP and runs your rules on every sync, with a dry run for each rule and an undo for every delete.",
+  "description": "Mail sorting with rules you write: Postvak syncs your mail over IMAP and runs your rules on every sync, with a dry run for each rule and an undo for every action.",
   "url": "https://postvak.pataar.nl/",
   "image": "https://postvak.pataar.nl/assets/social-preview.png",
   "applicationCategory": "CommunicationApplication",
@@ -59,12 +59,12 @@
     <div class="hero-copy">
       <p class="eyebrow">Open-source mail sorting for macOS and Linux</p>
       <h1>Your inbox, organized by rules <em>you</em> write.</h1>
-      <p class="lede">Postvak sorts any IMAP inbox with rules you can read: move mail, archive it, mark it read, or delete sign-in codes once you have used them. It sorts on your mail server, so every mail app you use sees the result, your phone included. Test every rule with a dry run, and undo any delete.</p>
+      <p class="lede">Postvak sorts any IMAP inbox with rules you can read: move mail, archive it, mark it read, or delete sign-in codes once you have used them. It sorts on your mail server, so every mail app you use sees the result, your phone included. Test every rule with a dry run, and undo anything a rule did.</p>
 
       <div class="install" data-tabs>
         <div class="tabs" role="tablist" aria-label="Install with">
           <button type="button" role="tab" id="tab-homebrew" aria-selected="true" aria-controls="install-cmd" tabindex="0" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
-          <button type="button" role="tab" id="tab-flatpak" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo&#10;flatpak remote-add --user --if-not-exists postvak https://postvak.pataar.nl/flatpak/postvak.flatpakrepo&#10;flatpak install --user postvak io.github.postvak_app.postvak">Flatpak</button>
+          <button type="button" role="tab" id="tab-flatpak" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="flatpak install --user https://postvak.pataar.nl/flatpak/postvak.flatpakref">Flatpak</button>
           <button type="button" role="tab" id="tab-cargo" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="cargo install postvak">Cargo</button>
           <button type="button" role="tab" id="tab-docker" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
         </div>
@@ -131,7 +131,7 @@
     <article><h3>Safe from the sender</h3><p>Mail is written by strangers. A rule matches patterns, so instructions hidden in a message cannot change what it does.</p></article>
     <article><h3>Private</h3><p>Your mail is never sent to a model to be sorted. Agents see only <a href="/docs/mcp.html#scopes">what you grant</a>: by default senders and subjects, no bodies.</p></article>
     <article><h3>Free and fast</h3><p>No tokens per message and no API key. Rules run on every sync, across years of mail, without a round trip to a model.</p></article>
-    <article><h3>AI where it helps</h3><p>An agent over MCP reads your inbox and <a href="/docs/rules.html#proposals">proposes a rule</a>. You approve it once; from then on the rule does the work.</p></article>
+    <article><h3>AI where it helps</h3><p>An agent over MCP reads your inbox and <a href="/docs/rules.html#proposals">proposes a rule</a>, or a change to a shared list. You approve it once; from then on the rule does the work.</p></article>
   </div>
 </section>
 
@@ -156,9 +156,10 @@
   </div>
   <div class="window terminal">
     <div class="window-bar"><span></span><span></span><span></span><b>terminal</b></div>
-<pre tabindex="0" aria-label="Commands for a dry run, background sorting and undo"><code><span class="p">$</span> postvak rules test      <span class="c"># dry run first</span>
+<pre tabindex="0" aria-label="Commands for a dry run, background sorting, the log and undo"><code><span class="p">$</span> postvak rules test      <span class="c"># dry run first</span>
 <span class="p">$</span> postvak service install <span class="c"># sort at login</span>
-<span class="p">$</span> postvak trash list      <span class="c"># undo for 30 days</span></code></pre>
+<span class="p">$</span> postvak log             <span class="c"># what each rule did</span>
+<span class="p">$</span> postvak undo 42         <span class="c"># put one back</span></code></pre>
   </div>
   <a class="arrow" href="/docs/compare.html">The full comparison, AI sorters and where Postvak falls short</a>
 </section>
@@ -168,7 +169,7 @@
     <div>
       <p class="eyebrow">Agents propose, you approve</p>
       <h2>Let Claude draft the rule. Keep the decision.</h2>
-      <p>Optional: Postvak works fully without any AI. It also ships an MCP server. An agent can look at your inbox, write a rule and show its dry run, but the rule stays disabled until you approve it in the window or on the command line.</p>
+      <p>Optional: Postvak works fully without any AI. It also ships an MCP server for Claude, Codex, Cursor, Gemini CLI and other agent hosts. An agent can look at your inbox, write a rule and show its dry run, but the rule stays disabled until you approve it in the window or on the command line.</p>
       <p>It sees only <a href="/docs/mcp.html#scopes">what you grant</a>. By default that is folders, senders and subjects: no message bodies, and no moving or deleting mail. Bodies, acting on mail and approving rules are each a scope you add on purpose, and <code>--account</code> hides your other accounts.</p>
       <pre class="inline-cmd"><code><span class="p">$</span> postvak mcp install claude-desktop</code></pre>
       <a class="arrow" href="/docs/mcp.html">Agents over MCP</a>
@@ -185,7 +186,7 @@
   <div class="grid four">
     <a href="/docs/gui.html"><h3>Mail window</h3><p>A keyboard-driven window for reading mail and approving rules. No scripts, and no remote content until you allow it. <code>postvak gui</code></p></a>
     <a href="/docs/cli.html"><h3>Command line</h3><p>Every feature, with <code>--json</code> for scripts. List, search, move, test rules.</p></a>
-    <a href="/docs/mcp.html"><h3>MCP server</h3><p>For Claude and other agents, scoped to what you grant. Senders and subjects by default.</p></a>
+    <a href="/docs/mcp.html"><h3>MCP server</h3><p>For Claude, Codex, Cursor and other agents, scoped to what you grant. Senders and subjects by default.</p></a>
     <a href="/docs/daemon.html"><h3>Background sync</h3><p>Headless at login, on a server or in Docker. Works with any IMAP server.</p></a>
   </div>
 </section>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advanced rule examples — Postvak</title>
-<meta name="description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, nested conditions, delayed actions and rules for other folders.">
+<meta name="description" content="Postvak rules that work together: shared lists, verified senders, display-name spoofing, tags that route later rules, nested conditions, arrival times, delayed actions and rules for other folders.">
 <link rel="canonical" href="https://postvak.pataar.nl/rule-examples.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon.png">
@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Postvak">
 <meta property="og:url" content="https://postvak.pataar.nl/rule-examples.html">
 <meta property="og:title" content="Advanced rule examples — Postvak">
-<meta property="og:description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, nested conditions and delayed actions.">
+<meta property="og:description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, arrival times and delayed actions.">
 <meta property="og:image" content="https://postvak.pataar.nl/assets/social-preview.png">
 <meta property="og:image:width" content="2560">
 <meta property="og:image:height" content="1280">
@@ -39,7 +39,7 @@
   <div class="wrap">
     <p class="eyebrow">Rule examples</p>
     <h1>Rules that work together.</h1>
-    <p class="lede">One rule moves one kind of mail. These recipes combine them: shared lists, senders your provider vouches for, tags that later rules route on, and actions that wait. Every key is in the <a href="/docs/rules.html">rules reference</a>.</p>
+    <p class="lede">One rule moves one kind of mail. These recipes combine them: shared lists, senders your provider vouches for, tags that later rules route on, the time mail arrived, and actions that wait. Every key is in the <a href="/docs/rules.html">rules reference</a>.</p>
     <p class="newcomer">New to Postvak? It sorts any IMAP inbox with rules like these, on macOS and Linux. <a href="/docs/quickstart.html">Install it and write your first rule</a>.</p>
   </div>
 </header>
@@ -54,9 +54,10 @@
     </ul>
   </div>
   <div class="toc-group">
-    <a class="toc-title" href="#security">Trust and security<span class="count">4 recipes</span></a>
+    <a class="toc-title" href="#security">Trust and security<span class="count">5 recipes</span></a>
     <ul>
       <li><a href="#verified">Move only verified finance mail</a></li>
+      <li><a href="#display-name">Flag a name that claims to be your bank</a></li>
       <li><a href="#tag-route">Keep security mail out of the automated pile</a></li>
       <li><a href="#codes">Delete sign-in codes once used</a></li>
       <li><a href="#spam">Junk spam by its score, in two steps</a></li>
@@ -73,10 +74,11 @@
     </ul>
   </div>
   <div class="toc-group">
-    <a class="toc-title" href="#work">Work<span class="count">3 recipes</span></a>
+    <a class="toc-title" href="#work">Work<span class="count">4 recipes</span></a>
     <ul>
       <li><a href="#nested">File work mail, minus its bots</a></li>
       <li><a href="#external">Mark mail from outside the team</a></li>
+      <li><a href="#after-hours">Quiet work mail after hours</a></li>
       <li><a href="#after">Delete CI mail once seen</a></li>
     </ul>
   </div>
@@ -155,6 +157,24 @@
 <span class="p">$</span> postvak headers UID
 <span class="p">$</span> postvak account trust ACCOUNT mx.example.com
 <span class="p">$</span> postvak rules test "finance, verified"</code></pre>
+</article>
+
+<article id="display-name">
+  <h3>Flag a name that claims to be your bank</h3>
+  <p>The lookalike rule above catches mail that claims a finance domain in its address. Phishing more often comes from a domain of its own, with "PayPal" only in the display name, which is all most phones show. <code>from_name</code> reads that name alone. This rule flags mail whose name contains one of your finance names, unless it comes from one of the <code>finance</code> domains and your provider vouches for it.</p>
+  <p>Put it below the two finance rules. If a real service of yours mails under that name from another domain, such as a newsletter service, add that domain to <code>finance</code>.</p>
+  <p class="needs"><b>Needs</b> the account's <a href="/docs/rules.html#authenticated-mail"><code>trusted_authserv_ids</code></a>, as in <a href="#verified">the rules above</a>. Without it no mail counts as authenticated, so this flags every message with one of those names. The tag needs a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: flag a name that claims to be your bank"><code><span class="k">[lists]</span>
+<span class="a">finance_names</span> = { contains = [<span class="s">"Example Bank"</span>, <span class="s">"PayPal"</span>] }
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"names that claim to be finance"</span>
+<span class="a">match.from_name</span> = { list = <span class="s">"finance_names"</span> }
+<span class="a">match.none</span> = [{ from_domain = { list = <span class="s">"finance"</span> }, authenticated = <span class="b">true</span> }]
+<span class="a">actions.tag</span> = <span class="s">"$Suspicious"</span>
+<span class="a">actions.flagged</span> = <span class="b">true</span>
+<span class="a">actions.stop</span> = <span class="b">true</span></code></pre></div>
 </article>
 
 <article id="tag-route">
@@ -285,14 +305,14 @@
 
 <article id="esp">
   <h3>File a shop that mails through a newsletter service</h3>
-  <p>Many shops send promotions through a service such as Mailchimp or Sailthru, so the address is the service's domain and the shop's name appears only in the display name. <code>from_domain</code> reads only the address; <code>from</code> reads the whole header, display name included. This rule uses both on purpose, and keeps the shop's orders out with the <code>transactional</code> list.</p>
-  <p>A display name is whatever the sender writes, and anyone using that service can write "Brand". Fine for filing; never use it for mail you would act on, such as payments.</p>
+  <p>Many shops send promotions through a service such as Mailchimp or Sailthru, so the address is the service's domain and the shop's name appears only in the display name. <code>from_domain</code> reads only the address, <code>from_name</code> only the display name. This rule uses both on purpose, and keeps the shop's orders out with the <code>transactional</code> list.</p>
+  <p>A display name is whatever the sender writes, and anyone using that service can write "Brand". Fine for filing; never use it for mail you would act on, such as payments. To catch a name that claims too much, see <a href="#display-name">Flag a name that claims to be your bank</a>.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
 <pre tabindex="0" aria-label="rules.toml: file a shop that mails through a newsletter service"><code><span class="k">[[rules]]</span>
 <span class="a">name</span> = <span class="s">"brand promotions"</span>
 <span class="a">match.any</span> = [
   { from_domain = <span class="s">"brand.example"</span> },
-  { from_domain = <span class="s">"esp.example"</span>, from = { contains = <span class="s">"Brand"</span> } },
+  { from_domain = <span class="s">"esp.example"</span>, from_name = { contains = <span class="s">"Brand"</span> } },
 ]
 <span class="a">match.none</span> = [{ subject = { list = <span class="s">"transactional"</span> } }]
 <span class="a">actions.move</span> = <span class="s">"Shopping/Brand"</span></code></pre></div>
@@ -344,6 +364,22 @@
 <span class="a">actions.tag</span> = <span class="s">"$External"</span></code></pre></div>
 </article>
 
+<article id="after-hours">
+  <h3>Quiet work mail after hours</h3>
+  <p>Postvak knows when a message arrived, so a rule can treat the evening differently from the working day. Work mail that comes in at the weekend or outside office hours makes no notification and gets a tag, so on Monday you can find what came in. <code>arrived_hours</code> leaves out its end time and wraps past midnight when the end comes first; the <code>none</code> turns office hours into everything else.</p>
+  <p class="needs"><b>Needs</b> the right time zone where the daemon runs: arrival times are in that machine's local time. The Docker image runs on UTC unless you mount the host's with <code>-v /etc/localtime:/etc/localtime:ro</code>. The tag needs a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: quiet work mail after hours"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"work mail after hours"</span>
+<span class="a">match.from_domain</span> = <span class="s">"work.example"</span>
+<span class="a">match.any</span> = [
+  { arrived_days = <span class="s">"sat-sun"</span> },
+  { none = [{ arrived_hours = <span class="s">"08:00-18:00"</span> }] },
+]
+<span class="a">actions.tag</span> = <span class="s">"$AfterHours"</span>
+<span class="a">actions.notify</span> = <span class="b">false</span></code></pre></div>
+</article>
+
 <article id="after">
   <h3>Delete CI mail once seen</h3>
   <p>GitHub marks its build mail with an <code>X-GitHub-Reason</code> header. <code>after</code> takes a list and waits for whichever comes first: you read the message, or two days pass. A delete keeps an <code>.eml</code> copy in Postvak's trash, so <code>postvak trash restore</code> brings it back.</p>
@@ -392,10 +428,11 @@
 
 <section id="test">
   <h2>Try them before they act</h2>
-  <p>A new rule acts only on mail that arrives after you enable it. Before that, check the file and preview each rule on the mail Postvak has cached. <code>--as-of</code> moves the clock, to see what <code>older_than</code> and <code>after</code> will do later, and <a href="/docs/rules.html#coverage"><code>rules coverage</code></a> shows mail that several rules compete for. The <a href="/docs/rules.html#examples">rules reference</a> has more examples of single rules.</p>
+  <p>A new rule acts only on mail that arrives after you enable it. Before that, check the file and preview each rule on the mail Postvak has cached. <code>--as-of</code> moves the clock, to see what <code>older_than</code> and <code>after</code> will do later. <code>--as-arrival</code> treats every cached message as if it just arrived, to see what a hold or an <code>after</code> wait does to new mail; with <code>--as-of 20min</code> beside it, what happens 20 minutes on. <a href="/docs/rules.html#coverage"><code>rules coverage</code></a> shows mail that several rules compete for. The <a href="/docs/rules.html#examples">rules reference</a> has more examples of single rules.</p>
   <pre class="inline-cmd" tabindex="0" aria-label="Commands to check and preview rules"><code><span class="p">$</span> postvak rules check
 <span class="p">$</span> postvak rules test "spam suspects"
 <span class="p">$</span> postvak rules test --as-of 2d
+<span class="p">$</span> postvak rules test --as-arrival --as-of 20min
 <span class="p">$</span> postvak rules coverage --folder INBOX</code></pre>
   <div class="cta">
     <a class="button primary" href="/docs/rules.html">Read the rules reference</a>
