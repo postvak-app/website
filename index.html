@@ -228,6 +228,12 @@
     command = tab.dataset.cmd;
     out.textContent = command.split("\n").map((line) => "$ " + line).join("\n");
   }
+  // Preselect Flatpak on desktop Linux; macOS and everything else keep Homebrew.
+  // Android reports a Linux platform too, so it is ruled out by its user agent.
+  const platform = navigator.userAgentData?.platform || navigator.platform || "";
+  if (/linux/i.test(platform) && !/android/i.test(navigator.userAgent)) {
+    select(document.getElementById("tab-flatpak"));
+  }
   for (const tab of tabs) {
     tab.addEventListener("click", () => select(tab));
     tab.addEventListener("keydown", (event) => {
