@@ -193,11 +193,13 @@ section { padding: 96px 0 0; }
 .recipes article > p, #test > p { color: var(--muted); }
 .recipes .window { margin-top: 20px; }
 .recipes .cta .button.ghost { color: var(--text); }
-.toc { display: grid; gap: 18px; padding-top: 48px; }
-.toc-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.toc .toc-title { flex-basis: 100%; padding: 0; border: 0; background: none; color: var(--vermilion); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
-.toc a { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--text); font-size: 15px; text-decoration: none; }
-.toc a:hover { border-color: var(--vermilion); }
+.toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding-top: 48px; }
+.toc-group { padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.toc-title { display: block; color: var(--vermilion); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+.toc .count { display: none; }
+.toc ul { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.toc ul a { color: var(--text); font-size: 15px; line-height: 1.35; text-decoration: none; }
+.toc a:hover { color: var(--link); text-decoration: underline; }
 .note { color: var(--muted); margin: 32px 0 0; padding-left: 16px; border-left: 3px solid var(--vermilion); }
 .note b, .needs b { color: var(--text); }
 .recipes article > p.needs { font-size: 15px; padding: 10px 14px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; }
@@ -226,6 +228,10 @@ section { padding: 96px 0 0; }
     .sorter .rule { padding: 0 8px; font-size: 11px; }
     .sorter .bin { font-size: 13px; }
     .sorter .mail { padding: 0 8px; font-size: 11px; }
+    .toc { grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 32px; }
+    .toc-group { padding: 12px 14px; }
+    .toc ul { display: none; }
+    .toc .count { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; letter-spacing: 0; text-transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
