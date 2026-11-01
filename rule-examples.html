@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced rule examples — Postvak</title>
+<meta name="description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, nested conditions, delayed actions and rules for other folders.">
+<link rel="canonical" href="https://postvak.pataar.nl/rule-examples.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<meta name="theme-color" content="#1c2436">
+<link rel="preload" href="assets/fonts/BricolageGrotesque-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/HankenGrotesk-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Postvak">
+<meta property="og:url" content="https://postvak.pataar.nl/rule-examples.html">
+<meta property="og:title" content="Advanced rule examples — Postvak">
+<meta property="og:description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, nested conditions and delayed actions.">
+<meta property="og:image" content="https://postvak.pataar.nl/assets/social-preview.png">
+<meta property="og:image:width" content="2560">
+<meta property="og:image:height" content="1280">
+<meta property="og:image:alt" content="Postvak logo, tagline and an example rules.toml rule">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<header class="hero compact">
+  <nav class="nav wrap" aria-label="Main">
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="32" height="32"> Postvak</a>
+    <div class="nav-links">
+      <a href="/docs/">Docs</a>
+      <a href="/docs/rules.html">Rules</a>
+      <a href="/rule-examples.html" aria-current="page">Examples</a>
+      <a href="/docs/mcp.html">MCP</a>
+      <a href="https://github.com/postvak-app/postvak">GitHub</a>
+    </div>
+  </nav>
+  <div class="wrap">
+    <p class="eyebrow">Rule examples</p>
+    <h1>Rules that work together.</h1>
+    <p class="lede">One rule moves one kind of mail. These recipes combine them: shared lists, senders your provider vouches for, tags that later rules route on, and actions that wait. Every key is in the <a href="/docs/rules.html">rules reference</a>.</p>
+  </div>
+</header>
+
+<main class="recipes wrap">
+
+<nav class="toc" aria-label="Recipes">
+  <a href="#hold">Hold new mail for your phone</a>
+  <a href="#verified">Move only verified finance mail</a>
+  <a href="#tag-route">Keep security alerts out of the automated pile</a>
+  <a href="#nested">File work mail, minus its bots</a>
+  <a href="#external">Mark mail from outside the team</a>
+  <a href="#after">Delete CI mail once seen</a>
+  <a href="#body">Keep overdue invoices in view</a>
+  <a href="#folder">Tidy a folder that is not INBOX</a>
+</nav>
+
+<p class="note"><b>Order matters.</b> Rules run in file order, top to bottom, on every sync. The recipes are written in the order they would sit in one <code>rules.toml</code>, so the <code>stop</code> in an early rule decides what the later ones see. Replace the <code>.example</code> domains and addresses, the account name and the folder names with your own.</p>
+
+<section id="hold">
+  <h2>Hold new mail for your phone</h2>
+  <p>Mail apps on a phone mostly notify only for INBOX. Put this rule first and nothing below it touches a message for its first 15 minutes, so the phone sees everything before it is sorted.</p>
+  <p>It also delays rules that only tag or mark read. To delay only the moves, give each moving rule its own <code>after</code> instead, as in <a href="#after">Delete CI mail once seen</a>.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: hold new mail for your phone"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"hold new mail for the phone"</span>
+<span class="a">match.younger_than</span> = <span class="s">"15min"</span>
+<span class="a">actions.stop</span> = <span class="b">true</span></code></pre></div>
+</section>
+
+<section id="verified">
+  <h2>Move only verified finance mail</h2>
+  <p>Anyone can write <code>paypal.com</code> in a From line. <code>authenticated</code> holds only when your provider checked the signatures that prove a message came from that domain (DKIM and DMARC). Real bank mail is filed, and a lookalike stays in the inbox, flagged. One <code>[lists]</code> entry feeds both rules.</p>
+  <p class="needs"><b>Needs</b> the account's <a href="/docs/rules.html#authenticated-mail"><code>trusted_authserv_ids</code></a>. Without it no mail counts as authenticated, so the second rule flags all of it. The tag needs a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: move only verified finance mail"><code><span class="k">[lists]</span>
+<span class="a">finance</span> = [<span class="s">"bank.example"</span>, <span class="s">"paypal.com"</span>]
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"finance, verified"</span>
+<span class="a">match.from_domain</span> = { list = <span class="s">"finance"</span> }
+<span class="a">match.authenticated</span> = <span class="b">true</span>
+<span class="a">actions.move</span> = <span class="s">"Finance"</span>
+<span class="a">actions.stop</span> = <span class="b">true</span>
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"finance lookalikes"</span>
+<span class="a">match.from_domain</span> = { list = <span class="s">"finance"</span> }
+<span class="a">match.authenticated</span> = <span class="b">false</span>
+<span class="a">actions.tag</span> = <span class="s">"$Suspicious"</span>
+<span class="a">actions.flagged</span> = <span class="b">true</span>
+<span class="a">actions.stop</span> = <span class="b">true</span></code></pre></div>
+</section>
+
+<section id="tag-route">
+  <h2>Keep security alerts out of the automated pile</h2>
+  <p>Tag in one rule, route on the tag in the next: a rule sees what the rules above it changed in the same sync. The first rule tags and flags security alerts. The second clears mail from no-reply addresses out of the inbox, except what the first one tagged, so a sign-in alert from a no-reply address stays where you will see it.</p>
+  <p>Tags are IMAP keywords, which Thunderbird and other clients show as tags. They start with <code>$</code> here, a common convention for keywords; any name without spaces works.</p>
+  <p class="needs"><b>Needs</b> a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: keep security alerts out of the automated pile"><code><span class="k">[lists]</span>
+<span class="a">bots</span> = { regex = <span class="s">"no-?reply|notifications?@"</span> }
+<span class="a">security_subjects</span> = { regex = <span class="s">"sign-?in alert|new device"</span> }
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"tag security alerts"</span>
+<span class="a">match.subject</span> = { list = <span class="s">"security_subjects"</span> }
+<span class="a">actions.tag</span> = <span class="s">"$Security"</span>
+<span class="a">actions.flagged</span> = <span class="b">true</span>
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"automated mail out of the inbox"</span>
+<span class="a">match.from</span> = { list = <span class="s">"bots"</span> }
+<span class="a">match.none</span> = [{ tag = <span class="s">"$Security"</span> }]
+<span class="a">actions.move</span> = <span class="s">"Automated"</span>
+<span class="a">actions.notify</span> = <span class="b">false</span></code></pre></div>
+</section>
+
+<section id="nested">
+  <h2>File work mail, minus its bots</h2>
+  <p>Nest <code>none</code> inside <code>any</code>: each entry of <code>any</code> is a set of conditions that must all hold, and can exclude mail of its own. This files mail from colleagues, but not their build bots, together with anything sent to your work alias. It reuses the <code>bots</code> list from the recipe above.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: file work mail, minus its bots"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"work, minus the robots"</span>
+<span class="a">match.any</span> = [
+  { from_domain = <span class="s">"work.example"</span>, none = [{ from = { list = <span class="s">"bots"</span> } }] },
+  { alias = <span class="s">"me+work@example.com"</span> },
+]
+<span class="a">actions.move</span> = <span class="s">"Work"</span></code></pre></div>
+</section>
+
+<section id="external">
+  <h2>Mark mail from outside the team</h2>
+  <p><code>to_domain</code> reads the To header, <code>from_domain</code> the sender's address and never the display name. Together they tag mail sent to your company from anywhere else.</p>
+  <p class="needs"><b>Needs</b> a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: mark mail from outside the team"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"tag external mail to the team"</span>
+<span class="a">match.to_domain</span> = <span class="s">"work.example"</span>
+<span class="a">match.none</span> = [{ from_domain = <span class="s">"work.example"</span> }]
+<span class="a">actions.tag</span> = <span class="s">"$External"</span></code></pre></div>
+</section>
+
+<section id="after">
+  <h2>Delete CI mail once seen</h2>
+  <p>GitHub marks its build mail with an <code>X-GitHub-Reason</code> header. <code>after</code> takes a list and waits for whichever comes first: you read the message, or two days pass. A delete keeps an <code>.eml</code> copy in Postvak's trash, so <code>postvak trash restore</code> brings it back.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: delete CI mail once seen"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"CI mail, once seen"</span>
+<span class="a">match.header.X-GitHub-Reason</span> = { equals = <span class="s">"ci_activity"</span> }
+<span class="a">actions.delete</span> = <span class="b">true</span>
+<span class="a">actions.after</span> = [<span class="s">"read"</span>, <span class="s">"2d"</span>]</code></pre></div>
+</section>
+
+<section id="body">
+  <h2>Keep overdue invoices in view</h2>
+  <p>Archive invoices, except reminders, whether the reminder is in the subject or only in the text. HTML mail is converted to text before the <code>body</code> regex reads it.</p>
+  <p class="needs"><b>Needs</b> the body of new mail in the rule's folder, which Postvak downloads for this rule. A message whose body could not be downloaded never matches, even through <code>none</code>, so it stays in the inbox.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: keep overdue invoices in view"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"overdue invoices stay put"</span>
+<span class="a">match.subject</span> = { contains = [<span class="s">"invoice"</span>, <span class="s">"factuur"</span>] }
+<span class="a">match.none</span> = [
+  { subject = { contains = [<span class="s">"overdue"</span>, <span class="s">"reminder"</span>] } },
+  { body = { regex = <span class="s">"payment (is )?overdue"</span> } },
+]
+<span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
+</section>
+
+<section id="folder">
+  <h2>Tidy a folder that is not INBOX</h2>
+  <p>A rule watches INBOX unless it names a <code>folder</code>, and runs for every account unless it names one. This one archives list mail you have read, two weeks on, for your personal account only, and leaves flagged threads alone.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: tidy a folder that is not INBOX"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"tidy Lists"</span>
+<span class="a">account</span> = <span class="s">"personal"</span>
+<span class="a">folder</span> = <span class="s">"Lists"</span>
+<span class="a">match.read</span> = <span class="b">true</span>
+<span class="a">match.flagged</span> = <span class="b">false</span>
+<span class="a">match.older_than</span> = <span class="s">"2w"</span>
+<span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
+</section>
+
+<section id="test">
+  <h2>Try them before they act</h2>
+  <p>A new rule acts only on mail that arrives after you enable it. Before that, check the file and preview each rule on the mail Postvak has cached. <code>--as-of</code> moves the clock, to see what <code>older_than</code> and <code>after</code> will do later, and <a href="/docs/rules.html#coverage"><code>rules coverage</code></a> shows mail that several rules compete for. The <a href="/docs/rules.html#examples">rules reference</a> has more examples of single rules.</p>
+  <pre class="inline-cmd" tabindex="0" aria-label="Commands to check and preview rules"><code><span class="p">$</span> postvak rules check
+<span class="p">$</span> postvak rules test "tag security alerts"
+<span class="p">$</span> postvak rules test --as-of 2d
+<span class="p">$</span> postvak rules coverage --folder INBOX</code></pre>
+  <div class="cta">
+    <a class="button primary" href="/docs/rules.html">Read the rules reference</a>
+    <a class="button ghost" href="/docs/quickstart.html">Install Postvak</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer wrap">
+  <span>Made with <span role="img" aria-label="love">❤️</span> for open source by <a href="https://github.com/pataar">pataar</a></span>
+  <nav aria-label="Footer">
+    <a href="/docs/">Docs</a>
+    <a href="/docs/install.html">Install</a>
+    <a href="https://github.com/postvak-app/postvak/releases">Releases</a>
+    <a href="https://github.com/postvak-app/postvak">GitHub</a>
+  </nav>
+</footer>
+
+</body>
+</html>

@@ -47,6 +47,7 @@
     <div class="nav-links">
       <a href="/docs/">Docs</a>
       <a href="/docs/rules.html">Rules</a>
+      <a href="/rule-examples.html">Examples</a>
       <a href="/docs/mcp.html">MCP</a>
       <a href="https://github.com/postvak-app/postvak">GitHub</a>
     </div>
@@ -129,6 +130,7 @@
     <div class="mail" style="--i: 3">Lunch on Friday?</div>
     <figcaption>A rule matches on any header, the sender or the subject, then acts. No match, the message stays in the inbox.</figcaption>
   </figure>
+  <a class="arrow" href="/rule-examples.html">See rules that work together</a>
   <div class="grid">
     <article><h3>Predictable</h3><p>The same mail gets the same outcome, every time. A model can file a message differently tomorrow, or delete one it misread.</p></article>
     <article><h3>Reviewable</h3><p>A rule is a few lines of TOML. <a href="/docs/cli.html#postvak-rules-test"><code>rules test</code></a> shows what it would do. A message a rule acted on <a href="/docs/gui.html#message-actions-and-search">says which rule did it, and why</a>, and <a href="/docs/cli.html#postvak-log"><code>postvak log</code></a> lists every action.</p></article>
@@ -171,6 +173,7 @@
   <p>Free and open source under MIT or Apache-2.0. Postvak reads and sorts mail; it does not send it.</p>
   <div class="cta">
     <a class="button primary" href="/docs/quickstart.html">Read the quickstart</a>
+    <a class="button ghost" href="/rule-examples.html">See advanced rule examples</a>
     <a class="button ghost" href="/docs/compare.html">Compare with Sieve and imapfilter</a>
   </div>
 </section>
