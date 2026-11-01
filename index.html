@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Postvak — your inbox, organized by rules you write</title>
-<meta name="description" content="Postvak syncs your mail and runs rules you can read: move, archive, mark read or delete. Test them with a dry run and undo any delete. macOS and Linux.">
+<title>Postvak — open-source mail sorting with rules you write</title>
+<meta name="description" content="Free, open-source mail sorting for any IMAP inbox on macOS and Linux. Rules you can read move, archive, mark read or delete mail. Dry-run every rule, undo any delete. No AI needed.">
 <link rel="canonical" href="https://postvak.pataar.nl/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon.png">
@@ -15,8 +15,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Postvak">
 <meta property="og:url" content="https://postvak.pataar.nl/">
-<meta property="og:title" content="Postvak — your inbox, organized by rules you write">
-<meta property="og:description" content="Your inbox, organized by rules you write. Test them with a dry run and undo any delete.">
+<meta property="og:title" content="Postvak — open-source mail sorting with rules you write">
+<meta property="og:description" content="Sort any IMAP inbox with rules you can read. Test them with a dry run and undo any delete. Free and open source.">
 <meta property="og:image" content="https://postvak.pataar.nl/assets/social-preview.png">
 <meta property="og:image:width" content="2560">
 <meta property="og:image:height" content="1280">
@@ -32,7 +32,9 @@
   "image": "https://postvak.pataar.nl/assets/social-preview.png",
   "applicationCategory": "CommunicationApplication",
   "operatingSystem": "macOS, Linux",
-  "license": "https://github.com/postvak-app/postvak#readme",
+  "license": ["https://github.com/postvak-app/postvak/blob/main/LICENSE-MIT", "https://github.com/postvak-app/postvak/blob/main/LICENSE-APACHE"],
+  "isAccessibleForFree": true,
+  "downloadUrl": "https://postvak.pataar.nl/docs/install.html",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "pataar", "url": "https://github.com/pataar" },
   "sameAs": ["https://github.com/postvak-app/postvak", "https://crates.io/crates/postvak"]
@@ -55,20 +57,21 @@
 
   <div class="hero-body wrap">
     <div class="hero-copy">
-      <p class="eyebrow">Mail sorting for macOS and Linux</p>
+      <p class="eyebrow">Open-source mail sorting for macOS and Linux</p>
       <h1>Your inbox, organized by rules <em>you</em> write.</h1>
-      <p class="lede">Postvak syncs your mail into a local store and runs your rules on every sync: move it, archive it, mark it read, or delete sign-in codes once you have used them. Test every rule with a dry run, and undo any delete.</p>
+      <p class="lede">Postvak sorts any IMAP inbox with rules you can read: move mail, archive it, mark it read, or delete sign-in codes once you have used them. It sorts on your mail server, so every mail app you use sees the result, your phone included. Test every rule with a dry run, and undo any delete.</p>
 
       <div class="install" data-tabs>
-        <div class="tabs" role="tablist">
-          <button type="button" role="tab" aria-selected="true" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
-          <button type="button" role="tab" aria-selected="false" data-cmd="flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo&#10;flatpak remote-add --user --if-not-exists postvak https://postvak.pataar.nl/flatpak/postvak.flatpakrepo&#10;flatpak install --user postvak io.github.postvak_app.postvak">Flatpak</button>
-          <button type="button" role="tab" aria-selected="false" data-cmd="cargo install postvak">Cargo</button>
-          <button type="button" role="tab" aria-selected="false" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
+        <div class="tabs" role="tablist" aria-label="Install with">
+          <button type="button" role="tab" id="tab-homebrew" aria-selected="true" aria-controls="install-cmd" tabindex="0" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
+          <button type="button" role="tab" id="tab-flatpak" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo&#10;flatpak remote-add --user --if-not-exists postvak https://postvak.pataar.nl/flatpak/postvak.flatpakrepo&#10;flatpak install --user postvak io.github.postvak_app.postvak">Flatpak</button>
+          <button type="button" role="tab" id="tab-cargo" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="cargo install postvak">Cargo</button>
+          <button type="button" role="tab" id="tab-docker" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
         </div>
-        <div class="cmd">
-          <code data-out>$ brew install postvak-app/tap/postvak</code>
+        <div class="cmd" id="install-cmd" role="tabpanel" aria-labelledby="tab-homebrew">
+          <code data-out tabindex="0">$ brew install postvak-app/tap/postvak</code>
           <button class="copy" type="button" aria-label="Copy command">Copy</button>
+          <span class="visually-hidden" role="status" data-status></span>
         </div>
       </div>
 
@@ -76,30 +79,30 @@
         <a class="button primary" href="/docs/quickstart.html">Get started</a>
         <a class="button ghost" href="/docs/install.html">All install options</a>
       </div>
+
+      <ul class="trust">
+        <li><a href="https://github.com/postvak-app/postvak">Open source</a>, MIT or Apache-2.0</li>
+        <li><a href="/docs/crashes.html">No telemetry</a></li>
+        <li>Passwords in your <a href="/docs/accounts.html#passwords">keychain</a></li>
+        <li>Reads and sorts mail; it does not send it</li>
+      </ul>
     </div>
 
-    <figure class="hero-code" aria-label="An example rule">
+    <figure class="hero-visual">
+      <picture>
+        <source srcset="assets/gui_inbox_dark.avif" media="(prefers-color-scheme: dark)" type="image/avif">
+        <source srcset="assets/gui_inbox_dark.png" media="(prefers-color-scheme: dark)">
+        <source srcset="assets/gui_inbox_light.avif" type="image/avif">
+        <img src="assets/gui_inbox_light.png" alt="The Postvak mail window: folders on the left, the inbox in the middle, an open message on the right" width="1280" height="800" fetchpriority="high">
+      </picture>
       <div class="window">
         <div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
-<pre><code><span class="k">[[rules]]</span>
+<pre tabindex="0" aria-label="An example rules.toml"><code><span class="k">[[rules]]</span>
 <span class="a">name</span> = <span class="s">"used sign-in codes"</span>
 <span class="a">match.subject</span> = { regex = <span class="s">"sign.?in|magic link"</span> }
 <span class="a">match.older_than</span> = <span class="s">"1h"</span>
 <span class="a">match.read</span> = <span class="b">true</span>
-<span class="a">actions.delete</span> = <span class="b">true</span>
-
-<span class="k">[[rules]]</span>
-<span class="a">name</span> = <span class="s">"archive old mail"</span>
-<span class="a">match.older_than</span> = <span class="s">"90d"</span>
-<span class="a">match.read</span> = <span class="b">true</span>
-<span class="a">match.flagged</span> = <span class="b">false</span>
-<span class="a">actions.archive</span> = <span class="b">true</span></code></pre>
-      </div>
-      <div class="window terminal">
-        <div class="window-bar"><span></span><span></span><span></span><b>terminal</b></div>
-<pre><code><span class="p">$</span> postvak rules test      <span class="c"># dry run first</span>
-<span class="p">$</span> postvak service install <span class="c"># sort at login</span>
-<span class="p">$</span> postvak trash list      <span class="c"># undo for 30 days</span></code></pre>
+<span class="a">actions.delete</span> = <span class="b">true</span></code></pre>
       </div>
     </figure>
   </div>
@@ -107,22 +110,13 @@
 
 <main>
 
-<section class="shot wrap">
-  <picture>
-    <source srcset="assets/gui_inbox_dark.avif" media="(prefers-color-scheme: dark)" type="image/avif">
-    <source srcset="assets/gui_inbox_dark.png" media="(prefers-color-scheme: dark)">
-    <source srcset="assets/gui_inbox_light.avif" type="image/avif">
-    <img src="assets/gui_inbox_light.png" alt="The Postvak mail window: folders on the left, the inbox in the middle, an open message on the right" width="1280" height="800" fetchpriority="high">
-  </picture>
-</section>
-
 <section class="why wrap">
   <h2>Rules, not an AI that sorts your mail.</h2>
   <p class="section-lede">Many AI mail clients hand every message to a model and let it decide. Postvak sorts with rules you can read, and lets AI help you write them.</p>
   <figure class="sorter">
-    <div class="sorter-row" style="--i: 0"><code class="rule">header."List-Id".contains = "shop"</code><span class="bin"><code>move, read</code>Newsletters</span></div>
-    <div class="sorter-row" style="--i: 1"><code class="rule">subject.contains = "invoice"</code><span class="bin"><code>archive</code>Archive</span></div>
-    <div class="sorter-row" style="--i: 2"><code class="rule wait">subject.regex = "sign.?in"<br>older_than = "1h"</code><span class="bin"><code>delete</code>Trash</span></div>
+    <div class="sorter-row" style="--i: 0"><code class="rule">match.header.List-Id = { contains = "shop" }</code><span class="bin"><code>move, read</code>Newsletters</span></div>
+    <div class="sorter-row" style="--i: 1"><code class="rule">match.subject = { contains = "invoice" }</code><span class="bin"><code>archive</code>Archive</span></div>
+    <div class="sorter-row" style="--i: 2"><code class="rule wait">match.subject = { regex = "sign.?in" }<br>match.older_than = "1h"</code><span class="bin"><code>delete</code>Trash</span></div>
     <div class="sorter-row" style="--i: 3"><code class="rule none">no rule matches</code><span class="bin"><code>untouched</code>Inbox</span></div>
     <div class="mail" style="--i: 0">deals@shop.example</div>
     <div class="mail" style="--i: 1">Invoice #2041</div>
@@ -141,12 +135,40 @@
   </div>
 </section>
 
+<section class="compare wrap" id="compare">
+  <h2>Why not Thunderbird filters or Sieve?</h2>
+  <p class="section-lede">Client filters stop when the app closes. Sieve sees a message once, as it arrives. Postvak keeps sorting without you, and acts on mail later: an hour after you read a sign-in code, or once a newsletter is a week old.</p>
+  <div class="table-scroll" tabindex="0">
+    <table aria-label="Postvak compared with other tools">
+      <thead>
+        <tr><th scope="col"><span class="visually-hidden">Feature</span></th><th scope="col">Postvak</th><th scope="col">Thunderbird, Apple Mail</th><th scope="col">Sieve</th><th scope="col">imapfilter</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Sorts while the app is closed</th><td class="yes">Yes</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Sorts mail already in a folder</th><td class="yes">On every sync</td><td>When you run a filter</td><td class="no">On delivery only</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Works with any IMAP server</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">If it offers Sieve</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Rules without programming</th><td class="yes">TOML or a form</td><td class="yes">Dialogs</td><td class="no">Sieve scripts</td><td class="no">Lua</td></tr>
+        <tr><th scope="row">Shows what a rule would do first</th><td class="yes">Dry run</td><td class="no">No</td><td class="no">No</td><td class="yes">Dry run</td></tr>
+        <tr><th scope="row">Undo a delete</th><td class="yes"><code>.eml</code> backups</td><td>The app's trash</td><td class="no">No</td><td class="no">No</td></tr>
+        <tr><th scope="row">Rules in a file you can keep in git</th><td class="yes">Yes</td><td class="no">No</td><td>On the server</td><td class="yes">Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="window terminal">
+    <div class="window-bar"><span></span><span></span><span></span><b>terminal</b></div>
+<pre tabindex="0" aria-label="Commands for a dry run, background sorting and undo"><code><span class="p">$</span> postvak rules test      <span class="c"># dry run first</span>
+<span class="p">$</span> postvak service install <span class="c"># sort at login</span>
+<span class="p">$</span> postvak trash list      <span class="c"># undo for 30 days</span></code></pre>
+  </div>
+  <a class="arrow" href="/docs/compare.html">The full comparison, AI sorters and where Postvak falls short</a>
+</section>
+
 <section class="agent">
   <div class="wrap split">
     <div>
       <p class="eyebrow">Agents propose, you approve</p>
       <h2>Let Claude draft the rule. Keep the decision.</h2>
-      <p>Postvak ships an MCP server. An agent can look at your inbox, write a rule and show its dry run, but the rule stays disabled until you approve it in the window or on the command line.</p>
+      <p>Optional: Postvak works fully without any AI. It also ships an MCP server. An agent can look at your inbox, write a rule and show its dry run, but the rule stays disabled until you approve it in the window or on the command line.</p>
       <p>It sees only <a href="/docs/mcp.html#scopes">what you grant</a>. By default that is folders, senders and subjects: no message bodies, and no moving or deleting mail. Bodies, acting on mail and approving rules are each a scope you add on purpose, and <code>--account</code> hides your other accounts.</p>
       <pre class="inline-cmd"><code><span class="p">$</span> postvak mcp install claude-desktop</code></pre>
       <a class="arrow" href="/docs/mcp.html">Agents over MCP</a>
@@ -170,11 +192,10 @@
 
 <section class="closing wrap">
   <h2>Sort your mail on your own terms.</h2>
-  <p>Free and open source under MIT or Apache-2.0. Postvak reads and sorts mail; it does not send it.</p>
+  <p>Free and open source under MIT or Apache-2.0, built in the open. <a href="https://github.com/postvak-app/postvak/issues/new/choose">File an issue</a>, or <a href="https://github.com/postvak-app/postvak/blob/main/CONTRIBUTING.md">help build it</a>.</p>
   <div class="cta">
     <a class="button primary" href="/docs/quickstart.html">Read the quickstart</a>
-    <a class="button ghost" href="/rule-examples.html">See advanced rule examples</a>
-    <a class="button ghost" href="/docs/compare.html">Compare with Sieve and imapfilter</a>
+    <a class="button ghost" href="/docs/install.html">All install options</a>
   </div>
 </section>
 
@@ -186,30 +207,53 @@
     <a href="/docs/">Docs</a>
     <a href="/docs/install.html">Install</a>
     <a href="https://github.com/postvak-app/postvak/releases">Releases</a>
+    <a href="https://github.com/postvak-app/postvak/issues/new/choose">Report a bug</a>
+    <a href="https://github.com/postvak-app/postvak/blob/main/CONTRIBUTING.md">Contribute</a>
     <a href="https://github.com/postvak-app/postvak">GitHub</a>
   </nav>
 </footer>
 
 <script>
   const out = document.querySelector("[data-out]");
-  const tabs = document.querySelectorAll("[data-tabs] [role=tab]");
+  const panel = document.getElementById("install-cmd");
+  const tabs = [...document.querySelectorAll("[data-tabs] [role=tab]")];
   let command = tabs[0].dataset.cmd;
+  function select(tab) {
+    for (const other of tabs) {
+      other.setAttribute("aria-selected", other === tab);
+      other.tabIndex = other === tab ? 0 : -1;
+    }
+    panel.setAttribute("aria-labelledby", tab.id);
+    command = tab.dataset.cmd;
+    out.textContent = command.split("\n").map((line) => "$ " + line).join("\n");
+  }
   for (const tab of tabs) {
-    tab.addEventListener("click", () => {
-      for (const other of tabs) other.setAttribute("aria-selected", other === tab);
-      command = tab.dataset.cmd;
-      out.textContent = command.split("\n").map((line) => "$ " + line).join("\n");
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (event) => {
+      const i = tabs.indexOf(tab);
+      const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      const target = tabs[(next + tabs.length) % tabs.length];
+      select(target);
+      target.focus();
     });
   }
   const copy = document.querySelector(".copy");
+  const status = document.querySelector("[data-status]");
   copy.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(command);
       copy.textContent = "Copied";
+      status.textContent = "Command copied";
     } catch {
       copy.textContent = "Select it";
+      status.textContent = "Copy failed; select the command instead";
     }
-    setTimeout(() => (copy.textContent = "Copy"), 1500);
+    setTimeout(() => {
+      copy.textContent = "Copy";
+      status.textContent = "";
+    }, 1500);
   });
 </script>
 </body>
