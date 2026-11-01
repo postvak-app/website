@@ -185,17 +185,22 @@ section { padding: 96px 0 0; }
 .hero.compact h1 + .lede { margin-bottom: 0; }
 .hero.compact .lede a { color: var(--peach); }
 .recipes { max-width: 860px; }
-.recipes section { padding-top: 64px; scroll-margin-top: 16px; }
-.recipes h2 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 14px; }
-.recipes section > p { color: var(--muted); }
+.recipes > section { padding-top: 88px; scroll-margin-top: 16px; }
+.recipes h2 { font-size: clamp(30px, 4vw, 40px); margin-bottom: 10px; }
+.group-lede { color: var(--muted); margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.recipes article { padding-top: 48px; scroll-margin-top: 16px; }
+.recipes h3 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 14px; }
+.recipes article > p, #test > p { color: var(--muted); }
 .recipes .window { margin-top: 20px; }
 .recipes .cta .button.ghost { color: var(--text); }
-.toc { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 48px; }
+.toc { display: grid; gap: 18px; padding-top: 48px; }
+.toc-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toc .toc-title { flex-basis: 100%; padding: 0; border: 0; background: none; color: var(--vermilion); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .toc a { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--text); font-size: 15px; text-decoration: none; }
 .toc a:hover { border-color: var(--vermilion); }
 .note { color: var(--muted); margin: 32px 0 0; padding-left: 16px; border-left: 3px solid var(--vermilion); }
 .note b, .needs b { color: var(--text); }
-.recipes section > p.needs { font-size: 15px; padding: 10px 14px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; }
+.recipes article > p.needs { font-size: 15px; padding: 10px 14px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; }
 .nav-links a[aria-current="page"] { color: #fff; box-shadow: inset 0 -2px var(--vermilion); }
 .sorter + .arrow { display: inline-block; margin: -24px 0 40px; }
 

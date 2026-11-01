@@ -46,24 +46,46 @@
 <main class="recipes wrap">
 
 <nav class="toc" aria-label="Recipes">
-  <a href="#hold">Hold new mail for your phone</a>
-  <a href="#verified">Move only verified finance mail</a>
-  <a href="#tag-route">Keep security mail out of the automated pile</a>
-  <a href="#parcels">Tag, hold, then route parcel mail</a>
-  <a href="#promos">Sweep promotions, keep the receipts</a>
-  <a href="#esp">File a shop that mails through a newsletter service</a>
-  <a href="#nested">File work mail, minus its bots</a>
-  <a href="#external">Mark mail from outside the team</a>
-  <a href="#after">Delete CI mail once seen</a>
-  <a href="#body">Keep overdue invoices in view</a>
-  <a href="#folder">Tidy a folder that is not INBOX</a>
-  <a href="#last">Archive the rest, last</a>
+  <div class="toc-group">
+    <a class="toc-title" href="#timing">Notifications first</a>
+    <a href="#hold">Hold new mail for your phone</a>
+  </div>
+  <div class="toc-group">
+    <a class="toc-title" href="#security">Trust and security</a>
+    <a href="#verified">Move only verified finance mail</a>
+    <a href="#tag-route">Keep security mail out of the automated pile</a>
+    <a href="#codes">Delete sign-in codes once used</a>
+    <a href="#spam">Junk spam by its score, in two steps</a>
+  </div>
+  <div class="toc-group">
+    <a class="toc-title" href="#shopping">Shopping and newsletters</a>
+    <a href="#parcels">Tag, hold, then route parcel mail</a>
+    <a href="#lists">Move list mail out of the inbox</a>
+    <a href="#promos">Sweep promotions, keep the receipts</a>
+    <a href="#esp">File a shop that mails through a newsletter service</a>
+    <a href="#body">Keep overdue invoices in view</a>
+  </div>
+  <div class="toc-group">
+    <a class="toc-title" href="#work">Work</a>
+    <a href="#nested">File work mail, minus its bots</a>
+    <a href="#external">Mark mail from outside the team</a>
+    <a href="#after">Delete CI mail once seen</a>
+  </div>
+  <div class="toc-group">
+    <a class="toc-title" href="#cleanup">Clean-up</a>
+    <a href="#folder">Tidy a folder that is not INBOX</a>
+    <a href="#last">Archive the rest, last</a>
+  </div>
 </nav>
 
-<p class="note"><b>Order matters.</b> Rules run in file order, top to bottom, on every sync. The recipes are written in the order they would sit in one <code>rules.toml</code>, so the <code>stop</code> in an early rule decides what the later ones see. Replace the <code>.example</code> domains and addresses, the account name and the folder names with your own.</p>
+<p class="note"><b>Order matters.</b> Rules run in file order, top to bottom, on every sync. When several rules match a message, the first <code>move</code> or <code>archive</code> wins, and a <code>stop</code> keeps every rule below it away. So when you combine recipes, put the rules that tag or hold above the ones that move, specific rules above broad ones, and catch-alls last; <code>rules coverage</code> shows mail two rules compete for. Replace the <code>.example</code> domains and addresses, the account name and the folder names with your own.</p>
 
-<section id="hold">
-  <h2>Hold new mail for your phone</h2>
+<section class="group" id="timing" aria-labelledby="timing-title">
+  <h2 id="timing-title">Notifications first</h2>
+  <p class="group-lede">A hold at the top of the file decides what your phone sees before any other rule runs.</p>
+
+<article id="hold">
+  <h3>Hold new mail for your phone</h3>
   <p>Mail apps on a phone mostly notify only for INBOX. A rule with <code>stop</code> near the top keeps every rule below it away from a message for a while, so the phone sees it before it is sorted. There are two ways to write it.</p>
   <p><b>Hold everything</b> for 15 minutes. Simple, but it also delays rules that only tag or mark read, and every route.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -71,24 +93,31 @@
 <span class="a">name</span> = <span class="s">"hold new mail for the phone"</span>
 <span class="a">match.younger_than</span> = <span class="s">"15min"</span>
 <span class="a">actions.stop</span> = <span class="b">true</span></code></pre></div>
-  <p><b>Hold only what matters</b>: banks, school, sign-in codes. Everything else is sorted at once, and only the mail you would pick up your phone for waits. The subjects are a list, since later recipes need the same pattern.</p>
+  <p><b>Hold only what matters</b>: banks, school, sign-in codes and security alerts. Everything else is sorted at once, and only the mail you would pick up your phone for waits. The subjects are two lists, since later recipes need the same patterns. Add the wording your own services use.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
 <pre tabindex="0" aria-label="rules.toml: hold only important mail for the phone"><code><span class="k">[lists]</span>
-<span class="a">security_subjects</span> = { regex = <span class="s">"sign-?in|new device|verification code|magic link"</span> }
+<span class="a">sign_in_codes</span> = { regex = <span class="s">"sign-?in code|verification code|magic link|inlogcode"</span> }
+<span class="a">security_alerts</span> = { regex = <span class="s">"sign-?in alert|new device|password (was )?changed"</span> }
 
 <span class="k">[[rules]]</span>
 <span class="a">name</span> = <span class="s">"hold important mail for the phone"</span>
 <span class="a">match.any</span> = [
   { from_domain = [<span class="s">"bank.example"</span>, <span class="s">"school.example"</span>] },
-  { subject = { list = <span class="s">"security_subjects"</span> } },
+  { subject = { list = <span class="s">"sign_in_codes"</span> } },
+  { subject = { list = <span class="s">"security_alerts"</span> } },
 ]
 <span class="a">match.younger_than</span> = <span class="s">"15min"</span>
 <span class="a">actions.stop</span> = <span class="b">true</span></code></pre></div>
   <p>Pick one. To delay only a move and let tagging run, give that one rule an <code>after</code>, as in <a href="#after">Delete CI mail once seen</a>.</p>
+</article>
 </section>
 
-<section id="verified">
-  <h2>Move only verified finance mail</h2>
+<section class="group" id="security" aria-labelledby="security-title">
+  <h2 id="security-title">Trust and security</h2>
+  <p class="group-lede">Mail that claims to be your bank, codes that pile up, and spam your server lets through.</p>
+
+<article id="verified">
+  <h3>Move only verified finance mail</h3>
   <p>Anyone can write <code>paypal.com</code> in a From line. <code>authenticated</code> holds only when your provider checked the signatures that prove a message came from that domain (DKIM and DMARC). Real bank mail is filed, and a lookalike stays in the inbox, flagged. One <code>[lists]</code> entry feeds both rules.</p>
   <p>Keep the second rule. Without it, mail that fails the check stays in the inbox unflagged, looking just like the real thing next to it.</p>
   <p class="needs"><b>Needs</b> the account's <a href="/docs/rules.html#authenticated-mail"><code>trusted_authserv_ids</code></a>. Without it no mail counts as authenticated: the first rule never fires, and the second flags all of it. The tag needs a server that accepts custom keywords.</p>
@@ -115,12 +144,12 @@
 <span class="p">$</span> postvak headers UID
 <span class="p">$</span> postvak account trust ACCOUNT mx.example.com
 <span class="p">$</span> postvak rules test "finance, verified"</code></pre>
-</section>
+</article>
 
-<section id="tag-route">
-  <h2>Keep security mail out of the automated pile</h2>
-  <p>Tag in one rule, route on the tag in the next: a rule sees what the rules above it changed in the same sync. The first rule tags security alerts and sign-in codes. The second clears mail from no-reply addresses out of the inbox, except what the first one tagged, so a sign-in code from a no-reply address stays where you will see it.</p>
-  <p>It reuses <code>security_subjects</code> from <a href="#hold">the hold</a>. If you paste a regex into a second rule, make it a list instead: copies drift apart without anyone noticing, and a list changes every rule that uses it at once.</p>
+<article id="tag-route">
+  <h3>Keep security mail out of the automated pile</h3>
+  <p>Tag in one rule, route on the tag in the next: a rule sees what the rules above it changed in the same sync. The first rule tags security alerts and sign-in codes. The second clears mail from no-reply addresses out of the inbox, except what the first one tagged, so a sign-in code from a no-reply address stays where you will see it. The second rule is broad: in one file, put it below rules that file specific no-reply mail, such as the <a href="#parcels">parcel chain</a>.</p>
+  <p>It reuses both subject lists from <a href="#hold">the hold</a>. If you paste a regex into a second rule, make it a list instead: copies drift apart without anyone noticing, and a list changes every rule that uses it at once.</p>
   <p>Tags are IMAP keywords, which Thunderbird and other clients show as tags. They start with <code>$</code> here, a common convention for keywords; any name without spaces works.</p>
   <p class="needs"><b>Needs</b> a server that accepts custom keywords.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -129,7 +158,10 @@
 
 <span class="k">[[rules]]</span>
 <span class="a">name</span> = <span class="s">"tag security mail"</span>
-<span class="a">match.subject</span> = { list = <span class="s">"security_subjects"</span> }
+<span class="a">match.any</span> = [
+  { subject = { list = <span class="s">"sign_in_codes"</span> } },
+  { subject = { list = <span class="s">"security_alerts"</span> } },
+]
 <span class="a">actions.tag</span> = <span class="s">"$Security"</span>
 
 <span class="k">[[rules]]</span>
@@ -138,10 +170,45 @@
 <span class="a">match.none</span> = [{ tag = <span class="s">"$Security"</span> }]
 <span class="a">actions.move</span> = <span class="s">"Automated"</span>
 <span class="a">actions.notify</span> = <span class="b">false</span></code></pre></div>
+</article>
+
+<article id="codes">
+  <h3>Delete sign-in codes once used</h3>
+  <p>A sign-in code or magic link is useless a minute after you use it, and they pile up. This deletes one an hour after you read it. It only works because rules run again on every sync: the message qualifies an hour after you read it, long after it arrived. A code you never read stays.</p>
+  <p>The rule uses <code>sign_in_codes</code> alone, not the security alerts, so a "new device" warning is never deleted. The <code>bots</code> sender check keeps a person who writes "verification code" in a subject out of it. A delete keeps an <code>.eml</code> copy, so <code>postvak trash restore</code> brings a code back.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: delete sign-in codes once used"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"delete used sign-in codes"</span>
+<span class="a">match.from</span> = { list = <span class="s">"bots"</span> }
+<span class="a">match.subject</span> = { list = <span class="s">"sign_in_codes"</span> }
+<span class="a">match.read</span> = <span class="b">true</span>
+<span class="a">match.older_than</span> = <span class="s">"1h"</span>
+<span class="a">actions.delete</span> = <span class="b">true</span></code></pre></div>
+</article>
+
+<article id="spam">
+  <h3>Junk spam by its score, in two steps</h3>
+  <p>Many servers score every message but only move it to Junk above a high threshold. SpamAssassin writes the score as stars in <code>X-Spam-Level</code>; some providers use their own header. Find yours with <code>postvak headers UID</code> on a spam and a legitimate message.</p>
+  <p>Then go in two steps. Tag at a low threshold first, and look at what <code>rules test</code> lists. Once a threshold catches only spam, junk above it. <code>junk</code> moves the message to the Junk folder whatever the server calls it, and tags it <code>$Junk</code> so the server's filter learns from it.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: junk spam by its score, in two steps"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"spam suspects"</span>
+<span class="a">match.header.X-Spam-Level</span> = { regex = <span class="s">'^\*{2,}'</span> }
+<span class="a">actions.tag</span> = <span class="s">"$SpamSuspect"</span>
+
+<span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"spam"</span>
+<span class="a">match.header.X-Spam-Level</span> = { regex = <span class="s">'^\*{5,}'</span> }
+<span class="a">actions.junk</span> = <span class="b">true</span></code></pre></div>
+</article>
 </section>
 
-<section id="parcels">
-  <h2>Tag, hold, then route parcel mail</h2>
+<section class="group" id="shopping" aria-labelledby="shopping-title">
+  <h2 id="shopping-title">Shopping and newsletters</h2>
+  <p class="group-lede">Parcels, lists, promotions and invoices: most of an inbox, and most of the exclusions people get wrong.</p>
+
+<article id="parcels">
+  <h3>Tag, hold, then route parcel mail</h3>
   <p>A rule in the middle of a chain can pause it. The first rule tags parcel mail by carrier or subject. The second stops at mail that is tagged, unread and less than a day old, so a new delivery notice stays in INBOX. The third moves everything tagged once the hold lets go: when you read it, or after a day.</p>
   <p>Keyword lists need your mail's languages. In a Dutch mailbox an English-only list (<code>delivered</code>, <code>on its way</code>) misses most of it, so this one has <code>bezorgd</code> and <code>onderweg</code> too.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -169,10 +236,22 @@
 <span class="a">match.tag</span> = <span class="s">"$Delivery"</span>
 <span class="a">actions.move</span> = <span class="s">"Parcels"</span></code></pre></div>
   <p>With a single route, <code>actions.after = ["read", "1d"]</code> on the third rule says the same thing more plainly than the hold, or than a hand-written <code>none = [{ read = false, younger_than = "1d" }]</code>. Either way, mail you never read moves once a day has passed. The hold rule pays off when several rules below it route the same tag, or should all wait.</p>
-</section>
+</article>
 
-<section id="promos">
-  <h2>Sweep promotions, keep the receipts</h2>
+<article id="lists">
+  <h3>Move list mail out of the inbox</h3>
+  <p>Mailing-list and bcc mail has an unsubscribe header and none of your addresses among the recipients. <code>to_me = false</code> checks To, Cc and Delivered-To against your address and aliases, so mail sent to you personally stays, even from a list. Placed above the promotions sweep, it takes the lists; the sweep takes the shop mail addressed to you.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: move list mail out of the inbox"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"list mail"</span>
+<span class="a">match.to_me</span> = <span class="b">false</span>
+<span class="a">match.header.List-Unsubscribe</span> = { regex = <span class="s">"."</span> }
+<span class="a">actions.move</span> = <span class="s">"Lists"</span>
+<span class="a">actions.notify</span> = <span class="b">false</span></code></pre></div>
+</article>
+
+<article id="promos">
+  <h3>Sweep promotions, keep the receipts</h3>
   <p>A promotions rule is usually the first one people write, and the exclusions are where it goes wrong: an order confirmation, a reply in a thread, a bounce or a sign-in code that happens to carry an unsubscribe link. Two lists hold the exclusions, written as literal strings in single quotes so the regex needs no extra backslashes. The tag from <a href="#tag-route">the security rule</a> keeps sign-in codes out.</p>
   <p>Move promotions to a folder, not to Junk: <code>junk</code> trains your server's spam filter, and newsletters you signed up for are not spam.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -191,10 +270,10 @@
 <span class="a">actions.move</span> = <span class="s">"Promotions"</span>
 <span class="a">actions.notify</span> = <span class="b">false</span></code></pre></div>
   <p>Add <code>replies_and_bounces</code> to the <code>none</code> of any rule that matches on subject keywords: a <code>Re:</code> about an invoice is a conversation, not an invoice.</p>
-</section>
+</article>
 
-<section id="esp">
-  <h2>File a shop that mails through a newsletter service</h2>
+<article id="esp">
+  <h3>File a shop that mails through a newsletter service</h3>
   <p>Many shops send promotions through a service such as Mailchimp or Sailthru, so the address is the service's domain and the shop's name appears only in the display name. <code>from_domain</code> reads only the address; <code>from</code> reads the whole header, display name included. This rule uses both on purpose, and keeps the shop's orders out with the <code>transactional</code> list.</p>
   <p>A display name is whatever the sender writes, and anyone using that service can write "Brand". Fine for filing; never use it for mail you would act on, such as payments.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -206,46 +285,10 @@
 ]
 <span class="a">match.none</span> = [{ subject = { list = <span class="s">"transactional"</span> } }]
 <span class="a">actions.move</span> = <span class="s">"Shopping/Brand"</span></code></pre></div>
-</section>
+</article>
 
-<section id="nested">
-  <h2>File work mail, minus its bots</h2>
-  <p>Nest <code>none</code> inside <code>any</code>: each entry of <code>any</code> is a set of conditions that must all hold, and can exclude mail of its own. This files mail from colleagues, but not their build bots, together with anything sent to your work alias. It reuses the <code>bots</code> list.</p>
-  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
-<pre tabindex="0" aria-label="rules.toml: file work mail, minus its bots"><code><span class="k">[[rules]]</span>
-<span class="a">name</span> = <span class="s">"work, minus the robots"</span>
-<span class="a">match.any</span> = [
-  { from_domain = <span class="s">"work.example"</span>, none = [{ from = { list = <span class="s">"bots"</span> } }] },
-  { alias = <span class="s">"me+work@example.com"</span> },
-]
-<span class="a">actions.move</span> = <span class="s">"Work"</span></code></pre></div>
-</section>
-
-<section id="external">
-  <h2>Mark mail from outside the team</h2>
-  <p><code>to_domain</code> reads the To header, <code>from_domain</code> the sender's address and never the display name. Together they tag mail sent to your company from anywhere else.</p>
-  <p class="needs"><b>Needs</b> a server that accepts custom keywords.</p>
-  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
-<pre tabindex="0" aria-label="rules.toml: mark mail from outside the team"><code><span class="k">[[rules]]</span>
-<span class="a">name</span> = <span class="s">"tag external mail to the team"</span>
-<span class="a">match.to_domain</span> = <span class="s">"work.example"</span>
-<span class="a">match.none</span> = [{ from_domain = <span class="s">"work.example"</span> }]
-<span class="a">actions.tag</span> = <span class="s">"$External"</span></code></pre></div>
-</section>
-
-<section id="after">
-  <h2>Delete CI mail once seen</h2>
-  <p>GitHub marks its build mail with an <code>X-GitHub-Reason</code> header. <code>after</code> takes a list and waits for whichever comes first: you read the message, or two days pass. A delete keeps an <code>.eml</code> copy in Postvak's trash, so <code>postvak trash restore</code> brings it back.</p>
-  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
-<pre tabindex="0" aria-label="rules.toml: delete CI mail once seen"><code><span class="k">[[rules]]</span>
-<span class="a">name</span> = <span class="s">"CI mail, once seen"</span>
-<span class="a">match.header.X-GitHub-Reason</span> = { equals = <span class="s">"ci_activity"</span> }
-<span class="a">actions.delete</span> = <span class="b">true</span>
-<span class="a">actions.after</span> = [<span class="s">"read"</span>, <span class="s">"2d"</span>]</code></pre></div>
-</section>
-
-<section id="body">
-  <h2>Keep overdue invoices in view</h2>
+<article id="body">
+  <h3>Keep overdue invoices in view</h3>
   <p>Archive invoices, except reminders, whether the reminder is in the subject or only in the text. HTML mail is converted to text before the <code>body</code> regex reads it.</p>
   <p class="needs"><b>Needs</b> the body of new mail in the rule's folder, which Postvak downloads for this rule. A message whose body could not be downloaded never matches, even through <code>none</code>, so it stays in the inbox.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -258,10 +301,56 @@
   { body = { regex = <span class="s">"payment (is )?overdue|betalingsachterstand"</span> } },
 ]
 <span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
+</article>
 </section>
 
-<section id="folder">
-  <h2>Tidy a folder that is not INBOX</h2>
+<section class="group" id="work" aria-labelledby="work-title">
+  <h2 id="work-title">Work</h2>
+  <p class="group-lede">Colleagues, outsiders and the build bots in between.</p>
+
+<article id="nested">
+  <h3>File work mail, minus its bots</h3>
+  <p>Nest <code>none</code> inside <code>any</code>: each entry of <code>any</code> is a set of conditions that must all hold, and can exclude mail of its own. This files mail from colleagues, but not their build bots, together with anything sent to your work alias. It reuses the <code>bots</code> list.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: file work mail, minus its bots"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"work, minus the robots"</span>
+<span class="a">match.any</span> = [
+  { from_domain = <span class="s">"work.example"</span>, none = [{ from = { list = <span class="s">"bots"</span> } }] },
+  { alias = <span class="s">"me+work@example.com"</span> },
+]
+<span class="a">actions.move</span> = <span class="s">"Work"</span></code></pre></div>
+</article>
+
+<article id="external">
+  <h3>Mark mail from outside the team</h3>
+  <p><code>to_domain</code> reads the To header, <code>from_domain</code> the sender's address and never the display name. Together they tag mail sent to your company from anywhere else.</p>
+  <p class="needs"><b>Needs</b> a server that accepts custom keywords.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: mark mail from outside the team"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"tag external mail to the team"</span>
+<span class="a">match.to_domain</span> = <span class="s">"work.example"</span>
+<span class="a">match.none</span> = [{ from_domain = <span class="s">"work.example"</span> }]
+<span class="a">actions.tag</span> = <span class="s">"$External"</span></code></pre></div>
+</article>
+
+<article id="after">
+  <h3>Delete CI mail once seen</h3>
+  <p>GitHub marks its build mail with an <code>X-GitHub-Reason</code> header. <code>after</code> takes a list and waits for whichever comes first: you read the message, or two days pass. A delete keeps an <code>.eml</code> copy in Postvak's trash, so <code>postvak trash restore</code> brings it back.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: delete CI mail once seen"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"CI mail, once seen"</span>
+<span class="a">match.header.X-GitHub-Reason</span> = { equals = <span class="s">"ci_activity"</span> }
+<span class="a">actions.delete</span> = <span class="b">true</span>
+<span class="a">actions.after</span> = [<span class="s">"read"</span>, <span class="s">"2d"</span>]</code></pre></div>
+</article>
+</section>
+
+<section class="group" id="cleanup" aria-labelledby="cleanup-title">
+  <h2 id="cleanup-title">Clean-up</h2>
+  <p class="group-lede">Rules that tidy what is already sorted, and the one that goes last.</p>
+
+<article id="folder">
+  <h3>Tidy a folder that is not INBOX</h3>
   <p>A rule watches INBOX unless it names a <code>folder</code>, and runs for every account unless it names one. This one archives list mail you have read, two weeks on, for your personal account only, and leaves flagged threads alone.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
 <pre tabindex="0" aria-label="rules.toml: tidy a folder that is not INBOX"><code><span class="k">[[rules]]</span>
@@ -272,10 +361,10 @@
 <span class="a">match.flagged</span> = <span class="b">false</span>
 <span class="a">match.older_than</span> = <span class="s">"2w"</span>
 <span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
-</section>
+</article>
 
-<section id="last">
-  <h2>Archive the rest, last</h2>
+<article id="last">
+  <h3>Archive the rest, last</h3>
   <p>A catch-all for INBOX: archive read, unflagged mail after 90 days. It goes at the bottom of the file. When several rules match a message, the first <code>move</code> or <code>archive</code> in the file wins, so a catch-all near the top would take mail that a more specific rule below it meant to file.</p>
   <p>A rule only acts on mail that arrives after you enable it, so on its own this one does nothing for 90 days. To clear the backlog, run it once over older mail, with a dry run first.</p>
   <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
@@ -287,13 +376,14 @@
 <span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
   <pre class="inline-cmd" tabindex="0" aria-label="Commands to apply the rule to older mail"><code><span class="p">$</span> postvak rules apply-existing "archive the rest" --dry-run
 <span class="p">$</span> postvak rules apply-existing "archive the rest"</code></pre>
+</article>
 </section>
 
 <section id="test">
   <h2>Try them before they act</h2>
   <p>A new rule acts only on mail that arrives after you enable it. Before that, check the file and preview each rule on the mail Postvak has cached. <code>--as-of</code> moves the clock, to see what <code>older_than</code> and <code>after</code> will do later, and <a href="/docs/rules.html#coverage"><code>rules coverage</code></a> shows mail that several rules compete for. The <a href="/docs/rules.html#examples">rules reference</a> has more examples of single rules.</p>
   <pre class="inline-cmd" tabindex="0" aria-label="Commands to check and preview rules"><code><span class="p">$</span> postvak rules check
-<span class="p">$</span> postvak rules test "tag security mail"
+<span class="p">$</span> postvak rules test "spam suspects"
 <span class="p">$</span> postvak rules test --as-of 2d
 <span class="p">$</span> postvak rules coverage --folder INBOX</code></pre>
   <div class="cta">
