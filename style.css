@@ -267,3 +267,5 @@ section { padding: 96px 0 0; }
     .button, .grid > a { transition: none; }
     .sorter .rule, .sorter .rule::after, .sorter .bin, .sorter .mail, .sorter .mail.wait { animation: none; }
 }
+
+.cmd code, .inline-cmd, .window pre { scrollbar-width: thin; scrollbar-color: var(--ink-line) transparent; }
