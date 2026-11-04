@@ -208,7 +208,7 @@ section { padding: 96px 0 0; }
 .hero.compact .newcomer { margin: 16px 0 0; color: #c9c6d0; }
 .hero.compact .newcomer a { color: var(--peach); }
 .hero.compact .lede a { color: var(--peach); }
-.recipes { max-width: 860px; }
+.recipes p { max-width: 40em; }
 .recipes > section { padding-top: 88px; scroll-margin-top: 16px; }
 .recipes h2 { font-size: clamp(30px, 4vw, 40px); margin-bottom: 10px; }
 .group-lede { color: var(--muted); margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
