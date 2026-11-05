@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advanced rule examples — Postvak</title>
-<meta name="description" content="Postvak rules that work together: shared lists, verified senders, display-name spoofing, tags that route later rules, nested conditions, arrival times, delayed actions and rules for other folders.">
+<meta name="description" content="Postvak rules that work together: shared lists, verified senders, display-name spoofing, tags that route later rules, nested conditions, arrival times, attachments, forwarding, delayed actions and rules for other folders.">
 <link rel="canonical" href="https://postvak.pataar.nl/rule-examples.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon.png">
@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Postvak">
 <meta property="og:url" content="https://postvak.pataar.nl/rule-examples.html">
 <meta property="og:title" content="Advanced rule examples — Postvak">
-<meta property="og:description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, arrival times and delayed actions.">
+<meta property="og:description" content="Postvak rules that work together: shared lists, verified senders, tags that route later rules, arrival times, attachments, forwarding and delayed actions.">
 <meta property="og:image" content="https://postvak.pataar.nl/assets/social-preview.png">
 <meta property="og:image:width" content="2560">
 <meta property="og:image:height" content="1280">
@@ -39,7 +39,7 @@
   <div class="wrap">
     <p class="eyebrow">Rule examples</p>
     <h1>Rules that work together.</h1>
-    <p class="lede">One rule moves one kind of mail. These recipes combine them: shared lists, senders your provider vouches for, tags that later rules route on, the time mail arrived, and actions that wait. Every key is in the <a href="/docs/rules.html">rules reference</a>.</p>
+    <p class="lede">One rule moves one kind of mail. These recipes combine them: shared lists, senders your provider vouches for, tags that later rules route on, the time mail arrived, what is attached, and actions that wait. Every key is in the <a href="/docs/rules.html">rules reference</a>.</p>
     <p class="newcomer">New to Postvak? It sorts any IMAP inbox with rules like these, on macOS and Linux. <a href="/docs/quickstart.html">Install it and write your first rule</a>.</p>
   </div>
 </header>
@@ -54,32 +54,35 @@
     </ul>
   </div>
   <div class="toc-group">
-    <a class="toc-title" href="#security">Trust and security<span class="count">5 recipes</span></a>
+    <a class="toc-title" href="#security">Trust and security<span class="count">6 recipes</span></a>
     <ul>
       <li><a href="#verified">Move only verified finance mail</a></li>
       <li><a href="#display-name">Flag a name that claims to be your bank</a></li>
       <li><a href="#tag-route">Keep security mail out of the automated pile</a></li>
       <li><a href="#codes">Delete sign-in codes once used</a></li>
       <li><a href="#spam">Junk spam by its score, in two steps</a></li>
+      <li><a href="#unvouched">Flag archives from senders nobody vouches for</a></li>
     </ul>
   </div>
   <div class="toc-group">
-    <a class="toc-title" href="#shopping">Shopping and newsletters<span class="count">5 recipes</span></a>
+    <a class="toc-title" href="#shopping">Shopping and newsletters<span class="count">6 recipes</span></a>
     <ul>
       <li><a href="#parcels">Tag, hold, then route parcel mail</a></li>
       <li><a href="#lists">Move list mail out of the inbox</a></li>
       <li><a href="#promos">Sweep promotions, keep the receipts</a></li>
       <li><a href="#esp">File a shop that mails through a newsletter service</a></li>
       <li><a href="#body">Keep overdue invoices in view</a></li>
+      <li><a href="#subaddress">Give each +tag its own folder</a></li>
     </ul>
   </div>
   <div class="toc-group">
-    <a class="toc-title" href="#work">Work<span class="count">4 recipes</span></a>
+    <a class="toc-title" href="#work">Work<span class="count">5 recipes</span></a>
     <ul>
       <li><a href="#nested">File work mail, minus its bots</a></li>
       <li><a href="#external">Mark mail from outside the team</a></li>
       <li><a href="#after-hours">Quiet work mail after hours</a></li>
       <li><a href="#after">Delete CI mail once seen</a></li>
+      <li><a href="#forward">Forward the invoice PDF to your bookkeeper</a></li>
     </ul>
   </div>
   <div class="toc-group">
@@ -232,6 +235,22 @@
 <span class="a">match.header.X-Spam-Level</span> = { regex = <span class="s">'^\*{5,}'</span> }
 <span class="a">actions.junk</span> = <span class="b">true</span></code></pre></div>
 </article>
+
+<article id="unvouched">
+  <h3>Flag archives from senders nobody vouches for</h3>
+  <p>A zip, an ISO or a program is how malware usually arrives. <code>attachment</code> matches an attachment's file name, and any attachment may match. This flags such mail unless your provider vouches for the sender, so a colleague's zip stays quiet and a stranger's stands out. <code>has_part</code> catches the same mail by its MIME type, for a file whose name hides what it is.</p>
+  <p class="needs"><b>Needs</b> the account's <a href="/docs/rules.html#authenticated-mail"><code>trusted_authserv_ids</code></a>, as in <a href="#verified">the finance rules</a>. Without it no mail counts as authenticated, so this flags every message with such an attachment.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: flag archives from senders nobody vouches for"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"unvouched archives"</span>
+<span class="a">match.any</span> = [
+  { attachment = { regex = <span class="s">'\.(zip|rar|7z|iso|exe|scr)$'</span> } },
+  { has_part = <span class="s">"application/x-msdownload"</span> },
+]
+<span class="a">match.authenticated</span> = <span class="b">false</span>
+<span class="a">actions.flagged</span> = <span class="b">true</span>
+</code></pre></div>
+</article>
 </section>
 
 <section class="group" id="shopping" aria-labelledby="shopping-title">
@@ -333,6 +352,18 @@
 ]
 <span class="a">actions.archive</span> = <span class="b">true</span></code></pre></div>
 </article>
+
+<article id="subaddress">
+  <h3>Give each +tag its own folder</h3>
+  <p>Sign up at each shop with its own tag, such as <code>me+shop@example.com</code>, and one rule files every tag into a folder of its own. <code>{subaddress}</code> in <code>move</code> is the tag, lower-cased, and a folder that does not exist yet is created. When a tag starts getting spam, you know which shop passed your address on.</p>
+  <p>Anyone can write to any tag, so only plain tags of letters, digits, <code>-</code> and <code>_</code> count, and the folder must sit below one you name. Mail without a usable tag is not moved.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: give each +tag its own folder"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"plus addresses to folders"</span>
+<span class="a">match.alias</span> = <span class="s">"me+*@example.com"</span>
+<span class="a">actions.move</span> = <span class="s">"Tags/{subaddress}"</span>
+</code></pre></div>
+</article>
 </section>
 
 <section class="group" id="work" aria-labelledby="work-title">
@@ -389,6 +420,22 @@
 <span class="a">match.header.X-GitHub-Reason</span> = { equals = <span class="s">"ci_activity"</span> }
 <span class="a">actions.delete</span> = <span class="b">true</span>
 <span class="a">actions.after</span> = [<span class="s">"read"</span>, <span class="s">"2d"</span>]</code></pre></div>
+</article>
+
+<article id="forward">
+  <h3>Forward the invoice PDF to your bookkeeper</h3>
+  <p>Invoice mail often carries a second PDF, such as the terms and conditions. The rule fires only when an attachment's name says it is an invoice, and the forward's <code>attachments</code> filter takes only PDFs with such a name, so the terms stay behind; the forward names what it left out. Postvak cannot pick "the first PDF": every attachment the filter matches goes along, so a mail with two invoices forwards both. <code>authenticated</code> keeps a stranger's fake invoice from reaching your bookkeeper.</p>
+  <p class="needs"><b>Needs</b> <a href="/docs/sending.html">sending set up</a> for the account, and your approval in Postvak: a forward rule sends nothing until you approve it with <code>postvak rules approve</code> or in the Rules view, and only mail that arrives after that is forwarded. Also the account's <a href="/docs/rules.html#authenticated-mail"><code>trusted_authserv_ids</code></a>, as in <a href="#verified">the finance rules</a>.</p>
+  <div class="window"><div class="window-bar"><span></span><span></span><span></span><b>rules.toml</b></div>
+<pre tabindex="0" aria-label="rules.toml: forward the invoice PDF to your bookkeeper"><code><span class="k">[[rules]]</span>
+<span class="a">name</span> = <span class="s">"invoices to the bookkeeper"</span>
+<span class="a">match.attachment</span> = { regex = <span class="s">'(invoice|factuur).*\.pdf$'</span> }
+<span class="a">match.authenticated</span> = <span class="b">true</span>
+<span class="a">actions.forward.to</span> = <span class="s">"books@example.org"</span>
+<span class="a">actions.forward.note</span> = <span class="s">"Invoice for the records"</span>
+<span class="a">actions.forward.attachments</span> = { type = <span class="s">"application/pdf"</span>, name = { regex = <span class="s">'(invoice|factuur)'</span> } }
+<span class="a">actions.move</span> = <span class="s">"Finance"</span>
+</code></pre></div>
 </article>
 </section>
 
