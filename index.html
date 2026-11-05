@@ -84,7 +84,7 @@
         <li><a href="https://github.com/postvak-app/postvak">Open source</a>, MIT or Apache-2.0</li>
         <li><a href="/docs/crashes.html">No telemetry</a></li>
         <li>Passwords in your <a href="/docs/accounts.html#passwords">keychain</a></li>
-        <li>Reads and sorts mail; it does not send it</li>
+        <li>Agents cannot send mail as you</li>
       </ul>
     </div>
 
@@ -170,7 +170,7 @@
       <p class="eyebrow">Agents propose, you approve</p>
       <h2>Let Claude draft the rule. Keep the decision.</h2>
       <p>Optional: Postvak works fully without any AI. It also ships an MCP server for Claude, Codex, Cursor, Gemini CLI and other agent hosts. An agent can look at your inbox, write a rule and show its dry run, but the rule stays disabled until you approve it in the window or on the command line.</p>
-      <p>It sees only <a href="/docs/mcp.html#scopes">what you grant</a>. By default that is folders, senders and subjects: no message bodies, and no moving or deleting mail. Bodies, acting on mail and approving rules are each a scope you add on purpose, and <code>--account</code> hides your other accounts.</p>
+      <p>It sees only <a href="/docs/mcp.html#scopes">what you grant</a>. By default that is folders, senders and subjects: no message bodies, and no moving or deleting mail. Bodies, acting on mail and approving rules are each a scope you add on purpose, and <code>--account</code> hides your other accounts. No scope lets it send mail: it gets no tool to send, and a rule that <a href="/docs/rules.html#forwarding">forwards mail</a> waits until you approve it yourself.</p>
       <pre class="inline-cmd"><code><span class="p">$</span> postvak mcp install claude-desktop</code></pre>
       <a class="arrow" href="/docs/mcp.html">Agents over MCP</a>
     </div>
@@ -184,8 +184,8 @@
 <section class="surfaces wrap">
   <h2>One engine, four ways in.</h2>
   <div class="grid four">
-    <a href="/docs/gui.html"><h3>Mail window</h3><p>A keyboard-driven window for reading mail and approving rules. No scripts, and no remote content until you allow it. <code>postvak gui</code></p></a>
-    <a href="/docs/cli.html"><h3>Command line</h3><p>Every feature, with <code>--json</code> for scripts. List, search, move, test rules.</p></a>
+    <a href="/docs/gui.html"><h3>Mail window</h3><p>A keyboard-driven window for reading and writing mail, and approving rules. No scripts, and no remote content until you allow it. <code>postvak gui</code></p></a>
+    <a href="/docs/cli.html"><h3>Command line</h3><p>Every feature, with <code>--json</code> for scripts. List, search, move, send, test rules.</p></a>
     <a href="/docs/mcp.html"><h3>MCP server</h3><p>For Claude, Codex, Cursor and other agents, scoped to what you grant. Senders and subjects by default.</p></a>
     <a href="/docs/daemon.html"><h3>Background sync</h3><p>Headless at login, on a server or in Docker. Works with any IMAP server.</p></a>
   </div>
