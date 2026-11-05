@@ -63,13 +63,13 @@
 
       <div class="install" data-tabs>
         <div class="tabs" role="tablist" aria-label="Install with">
-          <button type="button" role="tab" id="tab-homebrew" aria-selected="true" aria-controls="install-cmd" tabindex="0" data-cmd="brew install postvak-app/tap/postvak">Homebrew</button>
+          <button type="button" role="tab" id="tab-homebrew" aria-selected="true" aria-controls="install-cmd" tabindex="0" data-cmd="brew install --cask postvak-app/tap/postvak">Homebrew</button>
           <button type="button" role="tab" id="tab-flatpak" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="flatpak install --user https://postvak.pataar.nl/flatpak/postvak.flatpakref">Flatpak</button>
           <button type="button" role="tab" id="tab-cargo" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="cargo install postvak">Cargo</button>
           <button type="button" role="tab" id="tab-docker" aria-selected="false" aria-controls="install-cmd" tabindex="-1" data-cmd="docker pull ghcr.io/postvak-app/postvak">Docker</button>
         </div>
         <div class="cmd" id="install-cmd" role="tabpanel" aria-labelledby="tab-homebrew">
-          <code data-out tabindex="0">$ brew install postvak-app/tap/postvak</code>
+          <code data-out tabindex="0">$ brew install --cask postvak-app/tap/postvak</code>
           <button class="copy" type="button" aria-label="Copy command">Copy</button>
           <span class="visually-hidden" role="status" data-status></span>
         </div>
